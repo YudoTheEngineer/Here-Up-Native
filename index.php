@@ -1,7 +1,3 @@
-<?php 
-include 'env.php'; 
-?>
-
 <!DOCTYPE html>
 <html lang="en">
 
@@ -507,7 +503,7 @@ include 'env.php';
                 <!-- Footer Col 1: Brand Info -->
                 <div>
                     <div class="flex items-center justify-start gap-[13.5px] mb-[24px]">
-                        <img class="h-[31.5px]" src="{{ asset('images/icon.png') }}" alt="Icon">
+                        <img class="h-[31.5px]" src="public/images/icon.png" alt="Icon">
                         <h3 class="text-[20.7px] font-extrabold text-[#87CEEB]">HERE UP</h3>
                     </div>
                     <p class="text-[14.4px] text-[#91959C] font-light leading-relaxed">

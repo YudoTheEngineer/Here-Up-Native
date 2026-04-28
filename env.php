@@ -4,9 +4,9 @@ $username = 'root';
 $pass = '';
 $database = 'here_up_native';
 
-$conn = mysqli_connect($host, $username, $pass, $database);
+$connection = mysqli_connect($host, $username, $pass, $database);
 
-if (!$conn) {
+if (!$connection) {
     die("Connection failed: " . mysqli_connect_error());
 }
 ?>
