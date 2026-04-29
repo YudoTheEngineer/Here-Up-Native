@@ -1,51 +1,46 @@
-/**
- * signup-toggle.js
- * Tanggung jawab tunggal: toggle visibilitas password pada field
- * "Password" dan "Confirm Password", disertai pergantian ikon mata.
- *
- * Konvensi ikon:
- *   - eye      → password sedang TERSEMBUNYI  (klik untuk tampilkan)
- *   - eye-off  → password sedang TERLIHAT     (klik untuk sembunyikan)
- */
-
 document.addEventListener("DOMContentLoaded", () => {
 
-    /**
-     * Inisialisasi satu pasang tombol toggle + input.
-     * @param {string} inputId   - id dari <input type="password">
-     * @param {string} btnId     - id dari <button> toggle
-     * @param {string} iconId    - id dari <i data-lucide="...">
-     */
-    function initToggle(inputId, btnId, iconId) {
+    function initToggle(inputId, btnId) {
         const input = document.getElementById(inputId);
         const btn   = document.getElementById(btnId);
-        const icon  = document.getElementById(iconId);
 
-        if (!input || !btn || !icon) return;
+        if (!input || !btn) return;
 
-        btn.addEventListener("click", () => {
-            const isHidden = input.type === "password";
+        btn.addEventListener("click", (e) => {
+            // Mencegah form submit jika tombol tidak sengaja dianggap submit
+            e.preventDefault();
 
-            // Ganti tipe input
-            input.type = isHidden ? "text" : "password";
+            // 1. Cek tipe saat ini
+            const isPassword = input.type === "password";
 
-            // eye     = password tersembunyi → tampilkan ikon "lihat"
-            // eye-off = password terlihat    → tampilkan ikon "sembunyikan"
-            icon.setAttribute("data-lucide", isHidden ? "eye-off" : "eye");
+            // 2. Toggle tipe input
+            input.type = isPassword ? "text" : "password";
 
-            // Re-render hanya ikon ini agar efisien
-            lucide.createIcons({ nodes: [icon] });
+            // 3. Cari ikon di dalam tombol (baik itu <i> atau <svg>)
+            const icon = btn.querySelector("[data-lucide]");
+            
+            if (icon) {
+                // Set atribut baru: jika sekarang teks (tadi password), ikon jadi eye-off
+                const newIconName = isPassword ? "eye-off" : "eye";
+                icon.setAttribute("data-lucide", newIconName);
+                
+                // 4. Re-render ikon khusus untuk tombol ini
+                lucide.createIcons({
+                    attrs: {
+                        class: ["w-5", "h-5"] // Pastikan class tetap terjaga
+                    }
+                });
+            }
 
-            // Update aria-label untuk aksesibilitas
+            // 5. Update aksesibilitas
             btn.setAttribute(
                 "aria-label",
-                isHidden ? "Sembunyikan password" : "Tampilkan password"
+                isPassword ? "Sembunyikan password" : "Tampilkan password"
             );
         });
     }
 
-    // Inisialisasi kedua field password
-    initToggle("password",        "toggle-password",         "toggle-password-icon");
-    initToggle("confirm_password", "toggle-confirm-password", "toggle-confirm-icon");
-
+    // Inisialisasi untuk kedua field
+    initToggle("password", "toggle-password");
+    initToggle("confirm_password", "toggle-confirm-password");
 });

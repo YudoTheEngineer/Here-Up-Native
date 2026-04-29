@@ -1,8 +1,18 @@
+<?php
+session_start();
+if (isset($_SESSION["session"])) {
+    header("Location: ../views/dashboard.php");
+    exit();
+}
+?>
+
 <!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
+
+    <link rel="icon" type="image/png" href="../../public/favicon.ico">
     <title>Sign-In | Here Up</title>
 
     <!-- Tailwind CSS -->
@@ -20,33 +30,40 @@
             to start using Here Up!
         </p>
 
-        <form class="space-y-3 w-full max-w-sm mx-auto" action="../controller/SigninController.php" method="POST">
-            <!-- Username -->
+        <form id="signin-form" class="space-y-3 w-full max-w-sm mx-auto" action="../controllers/SigninController.php" method="POST">
             <label for="username" class="block text-sm font-medium text-[#565D6D]">Username</label>
             <div class="relative">
                 <input
-                type="text"
-                id="username"
-                name="username"
-                placeholder="cool_username345"
-                class="block w-full rounded border border-[#DEE1E6] py-2 pl-10 pr-3 placeholder-[#91959C] focus:border-[#87CEEB] focus:ring-1 focus:ring-[#87CEEB] focus:outline-none"
+                    type="text"
+                    id="username"
+                    name="username"
+                    placeholder="cool_username345"
+                    class="block w-full rounded border border-[#DEE1E6] py-2 pl-10 pr-3 placeholder-[#91959C] focus:border-[#87CEEB] focus:ring-1 focus:ring-[#87CEEB] focus:outline-none"
                 />
                 <i data-lucide="user" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#91959C]" stroke-width="2"></i>
             </div>
+            <p id="error-username" class="hidden text-xs text-red-500 mt-1"></p>
 
-            <!-- Password -->
             <label for="password" class="block text-sm font-medium text-[#565D6D]">Password</label>
             <div class="relative">
                 <input
-                type="password"
-                id="password"
-                name="password"
-                placeholder="password123"
-                class="block w-full rounded border border-[#DEE1E6] py-2 pl-10 pr-3 placeholder-[#91959C] focus:border-[#87CEEB] focus:ring-1 focus:ring-[#87CEEB] focus:outline-none"
+                    type="password"
+                    id="password"
+                    name="password"
+                    placeholder="password123"
+                    class="block w-full rounded border border-[#DEE1E6] py-2 pl-10 pr-3 placeholder-[#91959C] focus:border-[#87CEEB] focus:ring-1 focus:ring-[#87CEEB] focus:outline-none"
                 />
                 <i data-lucide="lock" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#91959C]" stroke-width="2"></i>
-            </div>
 
+                <button
+                    type="button"
+                    id="toggle-password"
+                    aria-label="Tampilkan password"
+                    class="absolute right-3 top-1/2 -translate-y-1/2 text-[#91959C] hover:text-[#565D6D] cursor-pointer focus:outline-none">
+                    <i id="toggle-password-icon" data-lucide="eye" class="w-5 h-5" stroke-width="2"></i>
+                </button>
+            </div>
+            <p id="error-password" class="hidden text-xs text-red-500 mt-1"></p>
 
             <a class="w-full mr-28 text-[#636AE8] text-[14px] my-4 text-left mx-auto block" href="#">Forgot Password ? </a>
 
@@ -56,16 +73,18 @@
 
             <img class="my-7 mx-auto block" src="../../public/images/auth/sign-in__line-image.png">
 
-            <img class="mx-auto block" src="../../public/images/auth/sign-in__google-image.png">
-
+            <img class="mx-auto block" src="../../public/images/auth/sign-in__google-image.png"> 
         </form>
+
         <p class="my-10 mx-auto text-[14px] text-[#565D6D]">Don't have an account yet? <a class="text-[#636AE8] underline ml-2 " href="sign-up.php">Sign Up</a></p>
     </div>
-
 
     <script>
         // Initialize Lucide Icon
         lucide.createIcons();
     </script>
+
+    <script src="../scripts/sign-in-validation.js"></script>
+    <script src="../scripts/toggle-password.js"></script>
 </body>
 </html>
