@@ -7,7 +7,7 @@ if (!isset($_SESSION["session"])) {
 }
 ?>
 
-<!DOCTYPE html>
+<!DOCTYPE html>`
 <html lang="en">
 <head>
     <meta charset="UTF-8">
@@ -104,7 +104,7 @@ if (!isset($_SESSION["session"])) {
                             
                             <p class="text-slate-500 text-sm mb-6 font-normal">Start a New Class and Invite Other User</p>
                             
-                            <button onclick="openModal()" class="bg-[#93C5FD] hover:bg-blue-400 text-white text-sm py-2.5 px-10 rounded-xl transition-all shadow-sm font-medium">
+                            <button onclick="openModal()" class="bg-[#93C5FD] hover:bg-blue-400 text-white text-sm py-2.5 px-10 rounded-xl transition-all shadow-sm font-medium cursor-pointer">
                                 Create Class
                             </button>
                         </div>  
@@ -120,8 +120,8 @@ if (!isset($_SESSION["session"])) {
                             
                             <p class="text-slate-500 text-sm mb-6 font-normal">Join Other User Class With Invitation Code</p>
                             
-                            <button class="bg-[#93C5FD] hover:bg-blue-400 text-white text-sm py-2.5 px-10 rounded-xl transition-all shadow-sm font-medium">
-                                Gabung Kelas
+                            <button class="bg-[#93C5FD] hover:bg-blue-400 text-white text-sm py-2.5 px-10 rounded-xl transition-all shadow-sm font-medium cursor-pointer">
+                                Join Class
                             </button>
                         </div>
                     </div>
@@ -147,22 +147,23 @@ if (!isset($_SESSION["session"])) {
             </div>
             <p class="text-sm text-[#565D6D] mb-4">Here is Where Your Journey Begins</p>
 
-            <form class="space-y-3" action="../controllers/SignupController.php" method="POST">
+            <form class="space-y-3" action="../controllers/CreateClassController.php" method="POST">
 
                 <!-- Class Name -->
                 <label class="text-sm text-[#565D6D]">Class Name</label>
                 <div class="relative">
-                    <input type="text" name="class_name"
-                        class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB]"
-                        placeholder="create a class name">
+                    <input type="text" name="class_name" id="class_name"
+                        class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1
+                        focus:ring-[#87CEEB]" placeholder="create a class name">
                     <i data-lucide="user" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"></i>
                 </div>
 
                 <!-- Description -->
                 <label class="text-sm text-[#565D6D]">Description</label>
                 <div class="relative">
-                    <input type="text" name="description"
-                        class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB]"
+                    <input type="text" name="class_description" id="class_description"
+                        class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none 
+                        focus:ring-1 focus:ring-[#87CEEB]"
                         placeholder="describe your class">
                     <i data-lucide="file-text" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"></i>
                 </div>
@@ -170,7 +171,7 @@ if (!isset($_SESSION["session"])) {
                 <!-- Mode -->
                 <label class="text-sm text-[#565D6D]">Select Mode</label>
                 <div class="relative">
-                    <select name="mode"
+                    <select name="class_mode"
                         class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB]">
                         <option disabled selected>What Mode do you prefer?</option>
                         <option value="1">Admin Only</option>

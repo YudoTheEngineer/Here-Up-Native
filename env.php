@@ -2,7 +2,7 @@
 $host = 'localhost';
 $username = 'root';
 $pass = '';
-$database = 'here_up_native';
+$database = 'here_up';
 
 $connection = mysqli_connect($host, $username, $pass, $database);
 
