@@ -11,7 +11,6 @@ if (!isset($_SESSION["session"])) {
 $class_name = $_POST["class_name"];
 $class_description = $_POST["class_description"];
 $class_mode = $_POST["class_mode"];
-$is_active = 1;
 $class_creator = $_SESSION["session"]["id"];
 
 function generateInvitationCode($connection) {
@@ -25,14 +24,30 @@ function generateInvitationCode($connection) {
 $invitation_code = generateInvitationCode($connection);
 
 $data = "
-INSERT INTO class (name, description, mode, is_active, created_by, unique_code)
-VALUES ('$class_name', '$class_description', '$class_mode', '$is_active', '$class_creator', '$invitation_code')
+INSERT INTO class (name, description, mode, created_by, unique_code)
+VALUES ('$class_name', '$class_description', '$class_mode', '$class_creator', '$invitation_code')
 ";
 
 if (mysqli_query($connection, $data)) {
-    header("Location: ../views/class.php");
-    exit;
-} else {
+    $get_id = mysqli_query($connection, "SELECT id FROM class WHERE unique_code = '$invitation_code' LIMIT 1");
+    $result = mysqli_fetch_assoc($get_id);
+
+    if ($result) {
+        $class_id = $result['id'];
+        
+        $user_class = "
+        INSERT INTO user_class (user_id, class_id, role)
+        VALUES ('$class_creator', '$class_id', '1')
+        ";
+        
+        if (mysqli_query($connection, $user_class)) {
+            header("Location: ../views/admin-class.php");
+            exit();
+        } else {
+            echo "Error adding user to class: " . mysqli_error($connection);
+        }
+    }
+} else {    
     echo "Error: " . mysqli_error($connection);
 }
 ?>

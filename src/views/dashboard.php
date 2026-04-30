@@ -7,14 +7,18 @@ if (!isset($_SESSION["session"])) {
 }
 ?>
 
-<!DOCTYPE html>`
+<!DOCTYPE html>
 <html lang="en">
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <link rel="icon" type="image/x-icon" href="../../public/favicon.ico">
     <title>Dashboard | HereUp</title>
+
+    <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
+
+    <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
 </head>
 <body class="bg-[#F8FAFC] text-[#64748B]">
@@ -158,6 +162,8 @@ if (!isset($_SESSION["session"])) {
                     <i data-lucide="user" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"></i>
                 </div>
 
+                <p id="error-class_name" class="hidden text-sm text-red-400"></p>
+
                 <!-- Description -->
                 <label class="text-sm text-[#565D6D]">Description</label>
                 <div class="relative">
@@ -168,7 +174,9 @@ if (!isset($_SESSION["session"])) {
                     <i data-lucide="file-text" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"></i>
                 </div>
 
-                <!-- Mode -->
+                <p id="error-class_description" class="hidden text-sm text-red-400"></p>
+
+                <!-- Class Mode -->
                 <label class="text-sm text-[#565D6D]">Select Mode</label>
                 <div class="relative">
                     <select name="class_mode"
@@ -180,6 +188,8 @@ if (!isset($_SESSION["session"])) {
                     </select>
                     <i data-lucide="blend" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"></i>
                 </div>
+
+                <p id="error-class_mode" class="hidden text-sm text-red-400"></p>
 
                 <!-- Buttons -->
                 <div class="flex gap-3 mt-5">
@@ -199,6 +209,6 @@ if (!isset($_SESSION["session"])) {
     <script>
         lucide.createIcons();
     </script>
-    <script src="../scripts/create-class.js"></script>
+    <script src="../scripts/create-class-validation.js"></script>
 </body>
 </html>
