@@ -1,6 +1,5 @@
 <?php
-include '../../env.php';
-
+// Session Validation
 session_start();
 
 if (isset($_SESSION["session"])) {
@@ -8,18 +7,31 @@ if (isset($_SESSION["session"])) {
     exit();
 }
 
+// Database Connection
+include '../../env.php';
+
+// Check if There is an Input From User
 if (isset($_POST["username"])){
+
+// Get Sign In Data
     $username = $_POST["username"];
     $password = $_POST["password"];
 
+    // Seacrch Username Variable
     $query = "SELECT * FROM user WHERE username='$username'";
     $result = mysqli_query($connection, $query);
     
+    // Check if Username is Exist in Database
     if (mysqli_num_rows($result) > 0) {
         $data = mysqli_fetch_assoc($result);
         
+        // Check if Password are Valid
         if (password_verify($password, $data["password"])) {
+
+            // Sign In New Session
             $_SESSION["session"] = $data;
+
+            // Head to Dashboard Page
             header("Location: ../views/dashboard.php");
             exit();
         } else {

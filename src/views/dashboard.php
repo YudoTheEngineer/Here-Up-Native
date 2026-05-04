@@ -1,4 +1,5 @@
 <?php
+// Session Validation
 session_start();
 
 if (!isset($_SESSION["session"])) {
@@ -25,8 +26,10 @@ if (!isset($_SESSION["session"])) {
 
     <div class="flex min-h-screen">
         
+        <!-- SideBar -->
         <aside class="  w-64 bg-white border-r border-gray-200 flex flex-col fixed h-full">
             <div class="p-6  flex items-center gap-2">
+                <!-- Icon and Title -->
                 <a href="#">
                     <div class="flex items-center justify-between gap-[13.5px] cursor-pointer">
                         <img class="h-[31.5px]" src="../../public/images/icon.png" alt="Icon">
@@ -34,7 +37,8 @@ if (!isset($_SESSION["session"])) {
                     </div>
                 </a>
             </div>
-
+            
+            <!-- Navigation Menu -->
             <nav class="flex-1 px-4 space-y-1">
                 <a href="#" class="flex items-center gap-3 px-4 py-3 bg-[#93C5FD] text-white rounded-xl font-medium transition-all">
                     <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
@@ -68,6 +72,7 @@ if (!isset($_SESSION["session"])) {
 
         <div class="flex-1 ml-64 flex flex-col">
             
+            <!-- HeadBar -->
             <header class="h-[75px] border-b border-gray-200 bg-white flex items-center justify-between px-8 sticky top-0 z-10">
                 
                 <div class="relative w-1/3">
