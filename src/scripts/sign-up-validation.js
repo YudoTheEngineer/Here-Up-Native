@@ -41,7 +41,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ── UI helpers ───────────────────────────────────────────────────────────
 
-    /** Tampilkan pesan error + border merah pada sebuah field. */
     function showError(input, errorEl, message) {
         errorEl.textContent = message;
         errorEl.classList.remove("hidden");
@@ -49,7 +48,6 @@ document.addEventListener("DOMContentLoaded", () => {
         input.classList.add(...CLS.error);
     }
 
-    /** Hapus error dan kembalikan border ke default. */
     function clearError(input, errorEl) {
         errorEl.textContent = "";
         errorEl.classList.add("hidden");
@@ -57,7 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
         input.classList.add(...CLS.base, ...CLS.focusDef);
     }
 
-    /** Tandai field valid dengan border hijau. */
     function markSuccess(input, errorEl) {
         errorEl.textContent = "";
         errorEl.classList.add("hidden");
@@ -133,26 +130,22 @@ document.addEventListener("DOMContentLoaded", () => {
 
     // ── Listener validasi live ───────────────────────────────────────────────
 
-    // Username: validasi saat keluar field; perbaiki live jika error sudah muncul
     fields.username.input.addEventListener("blur", validateUsername);
     fields.username.input.addEventListener("input", () => {
         if (!fields.username.error.classList.contains("hidden")) validateUsername();
     });
 
-    // Email: sama dengan username
     fields.email.input.addEventListener("blur", validateEmail);
     fields.email.input.addEventListener("input", () => {
         if (!fields.email.error.classList.contains("hidden")) validateEmail();
     });
 
-    // Password: validasi saat blur; jika confirm sudah diisi, re-check juga
     fields.password.input.addEventListener("blur", validatePassword);
     fields.password.input.addEventListener("input", () => {
         if (!fields.password.error.classList.contains("hidden")) validatePassword();
         if (fields.confirmPassword.input.value !== "") validateConfirmPassword();
     });
 
-    // Confirm password: validasi live setiap keystroke
     fields.confirmPassword.input.addEventListener("blur", validateConfirmPassword);
     fields.confirmPassword.input.addEventListener("input", validateConfirmPassword);
 
@@ -160,7 +153,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── Submit handler ───────────────────────────────────────────────────────
 
     form.addEventListener("submit", (e) => {
-        // Jalankan semua validator sekaligus
         const results = [
             validateUsername(),
             validateEmail(),
@@ -173,7 +165,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (!isFormValid) {
             e.preventDefault();
 
-            // Fokus ke field invalid pertama agar UX lebih baik
             const firstInvalid = Object.values(fields)
                 .map(f => f.input)
                 .find(input => input.classList.contains("border-red-400"));

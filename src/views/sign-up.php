@@ -31,7 +31,7 @@ if (isset($_SESSION["session"])) {
             </div>
             <p class="text-[#565D6D] mb-[47px]">Start Your Journey With Here Up</p>
 
-            <form class="space-y-3 w-full max-w-sm mx-auto" action="../controllers/SignupController.php" method="POST" novlidate>
+            <form class="space-y-3 w-full max-w-sm mx-auto" action="../controllers/SignupController.php" method="POST" novalidate>
 
                 <!-- Username -->
                 <label for="username" class="block text-sm font-medium text-[#565D6D]">Username</label>
@@ -42,7 +42,7 @@ if (isset($_SESSION["session"])) {
                         name="username"
                         placeholder="create an username"
                         class="block w-full rounded border border-[#DEE1E6] py-2 pl-10 pr-3 placeholder-[#91959C] focus:border-[#87CEEB] focus:ring-1 focus:ring-[#87CEEB] focus:outline-none"
-                    />
+                        value="<?= isset($_SESSION['user_input']['username']) ? htmlspecialchars($_SESSION['user_input']['username']) : '' ?>" />
                     <i data-lucide="user" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#91959C]" stroke-width="2"></i>
                 </div>
                 <p id="error-username" class="hidden text-sm text-red-400 font-inter"></p>
@@ -56,6 +56,7 @@ if (isset($_SESSION["session"])) {
                         name="email"
                         placeholder="name@example.com"
                         class="block w-full rounded border border-[#DEE1E6] py-2 pl-10 pr-3 placeholder-[#91959C] focus:border-[#87CEEB] focus:ring-1 focus:ring-[#87CEEB] focus:outline-none"
+                        value="<?= isset($_SESSION['user_input']['email']) ? htmlspecialchars($_SESSION['user_input']['email']) : '' ?>"
                     />
                     <i data-lucide="mail" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#91959C]" stroke-width="2"></i>
                 </div>
@@ -133,14 +134,54 @@ if (isset($_SESSION["session"])) {
                     <a class="text-[#636AE8] underline ml-2" href="sign-in.php" target="_self">Sign in</a>
                 </p>
             </form>
+
+            <!-- Error Notification -->
+            <div id="errorModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+                <div class="bg-white w-[400px] rounded-xl border border-[#DEDFE3] shadow-lg p-6 text-center">
+
+                    <div class="flex justify-center mb-4">
+                        <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                            <i data-lucide="x" class="text-red-500"></i>
+                        </div>
+                    </div>
+
+                    <h2 class="text-lg font-bold text-[#2D3142] mb-2">Error Message</h2>
+                    <p id="errorMessage" class="text-sm text-[#91959C] mb-6"></p>
+
+                    <button onclick="closeNotif()" 
+                        class="bg-[#87CEEB] text-white px-4 py-2 rounded-lg hover:shadow-md">
+                        OK
+                    </button>
+                </div>
+            </div>
+
         </div>
+        
+        <!-- Error Notification -->
+        <?php if (isset($_SESSION["error"])) :?>
+        <script>
+            document.addEventListener("DOMContentLoaded", () => {
+                const modal = document.getElementById("errorModal");
+                const message = document.getElementById("errorMessage");
+
+                message.textContent = "<?= $_SESSION["error"]; ?>";
+                modal.classList.remove("hidden");
+
+                window.closeNotif = function () {
+                    modal.classList.add("hidden");
+                };
+            });
+        </script>
+        <?php 
+            unset($_SESSION["error"]); endif; 
+            unset($_SESSION["user_input"]);
+        ?>
+        
 
         <!-- Initialize Lucide Icons -->
-        <script>lucide.createIcons();</script>
-
+        <script> lucide.createIcons();</script>
         <!-- Toggle Password Visibility -->
         <script src="../scripts/toggle-password.js"></script>
-
         <!-- Input Validation -->
         <script src="../scripts/sign-up-validation.js"></script>
     </body>

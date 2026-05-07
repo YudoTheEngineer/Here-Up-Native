@@ -78,8 +78,6 @@ document.addEventListener("DOMContentLoaded", () => {
 
         if (!isUsernameValid || !isPasswordValid) {
             e.preventDefault();
-            
-            // Fokus ke field pertama yang error
             if (!isUsernameValid) {
                 fields.username.input.focus();
             } else if (!isPasswordValid) {

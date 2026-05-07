@@ -129,7 +129,7 @@ if (!isset($_SESSION["session"])) {
                             
                             <p class="text-slate-500 text-sm mb-6 font-normal">Join Other User Class With Invitation Code</p>
                             
-                            <button class="bg-[#93C5FD] hover:bg-blue-400 text-white text-sm py-2.5 px-10 rounded-xl transition-all shadow-sm font-medium cursor-pointer">
+                            <button onclick="openJoinModal()" class="bg-[#93C5FD] hover:bg-blue-400 text-white text-sm py-2.5 px-10 rounded-xl transition-all shadow-sm font-medium cursor-pointer">
                                 Join Class
                             </button>
                         </div>
@@ -211,9 +211,54 @@ if (!isset($_SESSION["session"])) {
             </form>
         </div>
     </div>
+
+    <!-- Join Modal -->
+    <div id="joinClassModal" class="fixed inset-0 hidden items-center justify-center z-50">
+        
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black/30 backdrop-blur-sm"></div>
+
+        <!-- Modal Box -->
+        <div class="relative bg-white w-[500px] rounded-2xl border border-[#DEE1E6] p-6 z-10">
+
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-4">
+                <img class="h-[30px]" src="../../public/images/icon.png" alt="Icon">
+                <h1 class="text-xl text-[#87CEEB] font-bold">Join Class</h1>
+            </div>
+            <p class="text-sm text-[#565D6D] mb-4">Here is Where Your Journey Begins</p>
+
+            <form class="space-y-3" action="../controllers/JoinClassController.php" method="POST">
+
+                <!-- Invitation Code -->
+                <label class="text-sm text-[#565D6D]">Invitation Code</label>
+                <div class="relative">
+                    <input type="text" name="invitation_code" id="invitation_code"
+                        class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB]"
+                        placeholder="Enter code">
+                    <i data-lucide="key" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"></i>
+                </div>
+
+                <p id="error-invitation_code" class="hidden text-sm text-red-400"></p>
+
+                <!-- Buttons -->
+                <div class="flex gap-3 mt-5">
+                    <button type="submit"
+                        class="flex-1 py-3 bg-gradient-to-r from-[#7B61FF] via-[#3BC5BA] to-[#5D87E8] text-white rounded-xl">
+                        Join
+                    </button>
+
+                    <button type="button" onclick="closeJoinModal()"
+                        class="flex-1 py-3 border border-[#DEE1E6] rounded-xl">
+                        Cancel
+                    </button>
+                </div>
+            </form>
+        </div>
+    </div>
     <script>
         lucide.createIcons();
     </script>
-    <script src="../scripts/create-class-validation.js"></script>
+    <script src="../scripts/class-validation.js"></script>
 </body>
 </html>

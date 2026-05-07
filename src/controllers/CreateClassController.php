@@ -55,7 +55,7 @@ if (mysqli_query($connection, $data)) {
         if (mysqli_query($connection, $user_class)) {
 
             // Head to Admin Class Page
-            header("Location: ../views/admin-class.php");
+            header("Location: ../views/admin-class.php?class_id=".$class_id);
             exit();
         } else {
             echo "Error adding user to class: " . mysqli_error($connection);
