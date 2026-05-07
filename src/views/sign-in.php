@@ -39,6 +39,7 @@ if (isset($_SESSION["session"])) {
                     name="username"
                     placeholder="cool_username345"
                     class="block w-full rounded border border-[#DEE1E6] py-2 pl-10 pr-3 placeholder-[#91959C] focus:border-[#87CEEB] focus:ring-1 focus:ring-[#87CEEB] focus:outline-none"
+                    value="<?= isset($_SESSION['user_input']) ? htmlspecialchars($_SESSION['user_input']) : '' ?>"
                 />
                 <i data-lucide="user" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#91959C]" stroke-width="2"></i>
             </div>
@@ -77,13 +78,48 @@ if (isset($_SESSION["session"])) {
         </form>
 
         <p class="my-10 mx-auto text-[14px] text-[#565D6D]">Don't have an account yet? <a class="text-[#636AE8] underline ml-2 " href="sign-up.php">Sign Up</a></p>
+
+        <!-- Error Notification -->
+        <div id="errorModal" class="hidden fixed inset-0 bg-black/40 flex items-center justify-center z-50">
+            <div class="bg-white w-[400px] rounded-xl border border-[#DEDFE3] shadow-lg p-6 text-center">
+                <div class="flex justify-center mb-4">
+                    <div class="w-12 h-12 bg-red-100 rounded-full flex items-center justify-center">
+                        <i data-lucide="x" class="text-red-500"></i>
+                    </div>
+                </div>
+
+                <h2 class="text-lg font-bold text-[#2D3142] mb-2">Error Message</h2>
+                <p id="errorMessage" class="text-sm text-[#91959C] mb-6"></p>
+
+                <button onclick="closeNotif()" 
+                    class="bg-[#87CEEB] text-white px-4 py-2 rounded-lg hover:shadow-md">
+                    OK
+                </button>
+            </div>
+        </div>
     </div>
 
+    <?php if (isset($_SESSION["error"])) :?>
     <script>
-        // Initialize Lucide Icon
-        lucide.createIcons();
-    </script>
+        document.addEventListener("DOMContentLoaded", () => {
+            const modal = document.getElementById("errorModal");
+            const message = document.getElementById("errorMessage");
 
+            message.textContent = "<?= $_SESSION["error"]; ?>";
+            modal.classList.remove("hidden");
+
+            window.closeNotif = function () {
+                modal.classList.add("hidden");
+            };
+        });
+    </script>
+    <?php 
+        unset($_SESSION["error"]); endif; 
+        unset($_SESSION["user_input"]);
+    ?>
+
+    <!-- Initialize Lucide Icons -->
+    <script>lucide.createIcons();</script>
     <script src="../scripts/sign-in-validation.js"></script>
     <script src="../scripts/toggle-password.js"></script>
 </body>

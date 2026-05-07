@@ -15,7 +15,7 @@ $username = $_POST["username"];
 $password = $_POST["password"];
 
 // Seacrch Username Variable
-$query = "SELECT * FROM user WHERE username='$username'";
+$query = "SELECT * FROM user WHERE username = '$username'";
 $result = mysqli_query($connection, $query);
 
 // Check if Username is Exist in Database
@@ -31,10 +31,16 @@ if (mysqli_num_rows($result) > 0) {
         // Head to Dashboard Page
         header("Location: ../views/dashboard.php");
         exit();
-    } else {
-        echo "<script>alert('Invalid username or password'); window.location.href = '../views/sign-in.php';</script>";
+    } else { 
+        $_SESSION["error"] = "Invalid Username or Password";
+        $_SESSION["user_input"] = $username;
+        header("Location: ../views/sign-in.php");
+        exit();
     };
-} else {
-    echo "<script>alert('Invalid username or password'); window.location.href = '../views/sign-in.php';</script>";
+} else { 
+    $_SESSION["error"] = "Invalid Username or Password";
+    $_SESSION["user_input"] = $username;
+    header("Location: ../views/sign-in.php");
+    exit();
 }
 ?>

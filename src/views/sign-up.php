@@ -1,5 +1,10 @@
 <?php
 session_start();
+
+// Get Old Input from Controller
+$input = $_SESSION["user_input"];
+unset($_SESSION["user_input"]);
+
 if (isset($_SESSION["session"])) {
     header("Location: ../views/dashboard.php");
     exit();
@@ -42,7 +47,7 @@ if (isset($_SESSION["session"])) {
                         name="username"
                         placeholder="create an username"
                         class="block w-full rounded border border-[#DEE1E6] py-2 pl-10 pr-3 placeholder-[#91959C] focus:border-[#87CEEB] focus:ring-1 focus:ring-[#87CEEB] focus:outline-none"
-                        value="<?= isset($_SESSION['user_input']['username']) ? htmlspecialchars($_SESSION['user_input']['username']) : '' ?>" />
+                        value="<?= htmlspecialchars($input['username'] ?? '') ?>" />
                     <i data-lucide="user" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#91959C]" stroke-width="2"></i>
                 </div>
                 <p id="error-username" class="hidden text-sm text-red-400 font-inter"></p>
@@ -56,7 +61,7 @@ if (isset($_SESSION["session"])) {
                         name="email"
                         placeholder="name@example.com"
                         class="block w-full rounded border border-[#DEE1E6] py-2 pl-10 pr-3 placeholder-[#91959C] focus:border-[#87CEEB] focus:ring-1 focus:ring-[#87CEEB] focus:outline-none"
-                        value="<?= isset($_SESSION['user_input']['email']) ? htmlspecialchars($_SESSION['user_input']['email']) : '' ?>"
+                        value="<?= htmlspecialchars($input['email'] ?? '') ?>"
                     />
                     <i data-lucide="mail" class="w-5 h-5 absolute left-3 top-1/2 -translate-y-1/2 text-[#91959C]" stroke-width="2"></i>
                 </div>
@@ -173,8 +178,7 @@ if (isset($_SESSION["session"])) {
             });
         </script>
         <?php 
-            unset($_SESSION["error"]); endif; 
-            unset($_SESSION["user_input"]);
+            unset($_SESSION["error"]); endif;
         ?>
         
 

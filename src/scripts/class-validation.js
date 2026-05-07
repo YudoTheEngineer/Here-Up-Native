@@ -107,8 +107,8 @@ function validateClassName() {
         showError(input, error, "You Forgot to Fill Class Name.");
         return false;
     }
-    if (value.length < 3) {
-        showError(input, error, "Class Name must be at least 3 characters.");
+    if (value.length < 5) {
+        showError(input, error, "Class Name must be 5 characters or more.");
         return false;
     }
 
@@ -118,11 +118,6 @@ function validateClassName() {
 
 function validateClassDescription() {
     const { input, error } = fields.classDescription;
-
-    if (input.value.trim() === "") {
-        showError(input, error, "You Forgot to Fill Description.");
-        return false;
-    }
 
     markSuccess(input, error);
     return true;

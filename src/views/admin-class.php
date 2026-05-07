@@ -30,7 +30,7 @@ if (!$row) {
     exit();
 }
 
-if ($row['role'] != '1') {
+if ($row['role'] != 1) {
     header("Location: ../views/member-class.php?class_id=".$class_id);
     exit();
 }
