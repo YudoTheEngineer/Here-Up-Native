@@ -72,7 +72,7 @@ if (!isset($_SESSION["session"])) {
 
         <div class="flex-1 ml-64 flex flex-col">
             
-            <!-- HeadBar -->
+            <!-- Header -->
             <header class="h-[75px] border-b border-gray-200 bg-white flex items-center justify-between px-8 sticky top-0 z-10">
                 
                 <div class="relative w-1/3">
@@ -101,6 +101,7 @@ if (!isset($_SESSION["session"])) {
                 </div>
             </header>
 
+            <!-- Main Content -->
             <main class="p-10">
                 <div class="grid grid-cols-1 md:grid-cols-2 gap-8">    
                     <div class="bg-[#F1F9FE] rounded-[2rem] p-8 h-[320px] flex flex-col relative shadow-sm">
@@ -119,24 +120,93 @@ if (!isset($_SESSION["session"])) {
                         </div>  
                     </div>
 
-                    <div class="bg-[#FFF1F5] rounded-[2rem] p-8 h-[320px] flex flex-col relative shadow-sm">
-                        <h2 class="text-md">Join Class</h2>
-                        
-                        <div class="flex-1 flex flex-col items-center justify-center mt-7">
-                            <div class="mb-4">
-                                <i data-lucide="user-plus" class="w-7 h-7 stroke-[1.5]"></i>
-                            </div>
-                            
-                            <p class="text-slate-500 text-sm mb-6 font-normal">Join Other User Class With Invitation Code</p>
-                            
-                            <button onclick="openJoinModal()" class="bg-[#93C5FD] hover:bg-blue-400 text-white text-sm py-2.5 px-10 rounded-xl transition-all shadow-sm font-medium cursor-pointer">
-                                Join Class
-                            </button>
+                <div class="bg-[#FFF1F5] rounded-[2rem] p-8 h-[320px] flex flex-col relative shadow-sm">
+                    <h2 class="text-md">Join Class</h2>
+                    
+                    <div class="flex-1 flex flex-col items-center justify-center mt-7">
+                        <div class="mb-4">
+                            <i data-lucide="user-plus" class="w-7 h-7 stroke-[1.5]"></i>
                         </div>
+                        
+                        <p class="text-slate-500 text-sm mb-6 font-normal">Join Other User Class With Invitation Code</p>
+                        
+                        <button onclick="openJoinModal()" class="bg-[#93C5FD] hover:bg-blue-400 text-white text-sm py-2.5 px-10 rounded-xl transition-all shadow-sm font-medium cursor-pointer">
+                            Join Class
+                        </button>
                     </div>
+                </div>
 
+                <div class="bg-white rounded-[2rem] p-8 h-[320px] flex flex-col relative shadow-sm">
+                    <h2 class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-6">All Your Classes</h2>
+                    <table class="w-full text-sm border-collapse" style="table-layout: fixed;">
+                        <thead>
+                        <tr class="border-b border-gray-100">
+                            <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[8%]">No</th>
+                            <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[30%]">Class Name</th>
+                            <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[30%]">Admin</th>
+                            <th class="text-right text-xs font-medium text-gray-400 tracking-wide pb-3 w-[32%]">Created At</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="border-b border-gray-50">
+                            <td class="py-4 text-xs text-gray-400">1</td>
+                            <td class="py-4 pl-3">
+                            <span class="inline-flex items-center gap-1.5 bg-gray-100 rounded-md px-2.5 py-1 text-xs text-gray-500">
+                                <i data-lucide="shield" class="w-3 h-3"></i>
+                                XIRPL2
+                            </span>
+                            </td>
+                            <td class="py-4 pl-3">
+                            <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
+                                <span class="w-[22px] h-[22px] rounded-full bg-blue-50 flex items-center justify-center text-[10px] font-medium text-blue-500">Y</span>
+                                YudoTheEngineer
+                            </span>
+                            </td>
+                            <td class="py-4 text-right">
+                            <span class="inline-flex items-center justify-end gap-1.5 text-xs text-gray-400">
+                                <i data-lucide="calendar" class="w-3 h-3"></i>
+                                11-09-2024
+                            </span>
+                            </td>
+                        </tr>
+                        <!-- row 2, 3 dst... -->
+                        </tbody>
+                    </table>
+                </div>
+
+                <div class="bg-white rounded-[2rem] p-8 h-[320px] flex flex-col relative shadow-sm">
+                    <h2 class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-6">Today Activity</h2>
+                    <table class="w-full text-sm border-collapse" style="table-layout: fixed;">
+                        <thead>
+                        <tr class="border-b border-gray-100">
+                            <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[8%]">No</th>
+                            <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[32%]">Session</th>
+                            <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[32%]">Class Name</th>
+                            <th class="text-right text-xs font-medium text-gray-400 tracking-wide pb-3 w-[28%]">Date & Time</th>
+                        </tr>
+                        </thead>
+                        <tbody>
+                        <tr class="border-b border-gray-50">
+                            <td class="py-4 text-xs text-gray-400">1</td>
+                            <td class="py-4 pl-3 font-medium text-gray-500 text-sm">Kegiatan Ronda</td>
+                            <td class="py-4 pl-3">
+                            <span class="inline-flex items-center gap-1.5 bg-gray-100 rounded-md px-2.5 py-1 text-xs text-gray-500">
+                                <i data-lucide="shield" class="w-3 h-3"></i>
+                                Pos Kamling 21
+                            </span>
+                            </td>
+                            <td class="py-4 text-right">
+                            <span class="inline-flex items-center justify-end gap-1.5 text-xs text-gray-400">
+                                <i data-lucide="calendar" class="w-3 h-3"></i>
+                                Senin, 11-09-2026
+                            </span>
+                            </td>
+                        </tr>
+                        </tbody>
+                    </table>
                 </div>
             </main>
+
         </div>
     </div>
 
@@ -175,7 +245,7 @@ if (!isset($_SESSION["session"])) {
                     <input type="text" name="class_description" id="class_description"
                         class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none 
                         focus:ring-1 focus:ring-[#87CEEB]"
-                        placeholder="describe your class">
+                        placeholder="describe your class (optional)">
                     <i data-lucide="file-text" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2"></i>
                 </div>
 
@@ -186,7 +256,7 @@ if (!isset($_SESSION["session"])) {
                 <div class="relative">
                     <select name="class_mode"
                         class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB]">
-                        <option disabled selected>What Mode do you prefer?</option>
+                        <option value="" disabled selected>What Mode do you prefer?</option>
                         <option value="1">Admin Only</option>
                         <option value="2">Member Participation</option>
                         <option value="3">QR Code</option>

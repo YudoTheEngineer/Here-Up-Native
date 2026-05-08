@@ -2,8 +2,12 @@
 session_start();
 
 // Get Old Input from Controller
-$input = $_SESSION["user_input"];
-unset($_SESSION["user_input"]);
+$input = [];
+
+if (isset($_SESSION["user_input"])) {
+    $input = $_SESSION["user_input"];
+    unset($_SESSION["user_input"]);
+}
 
 if (isset($_SESSION["session"])) {
     header("Location: ../views/dashboard.php");

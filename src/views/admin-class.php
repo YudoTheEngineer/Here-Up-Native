@@ -20,10 +20,10 @@ if (!isset($_GET["class_id"])) {
 $class_id = $_GET["class_id"];
 $user_id = $_SESSION["session"]["id"];
 
-$data = "SELECT * FROM user_class WHERE user_id = '$user_id' AND class_id = '$class_id' LIMIT 1";
+$user_class_query = "SELECT * FROM user_class WHERE user_id = '$user_id' AND class_id = '$class_id' LIMIT 1";
 
-$result = mysqli_query($connection, $data);
-$row = mysqli_fetch_assoc($result);
+$user_class_result = mysqli_query($connection, $user_class_query);
+$row = mysqli_fetch_assoc($user_class_result);
 
 if (!$row) {
     header("Location: ../views/dashboard.php");
@@ -34,6 +34,11 @@ if ($row['role'] != 1) {
     header("Location: ../views/member-class.php?class_id=".$class_id);
     exit();
 }
+
+// Check Class Mode
+$class_mode_query = "SELECT * FROM `class` WHERE id = '$class_id' LIMIT 1";
+$class_mode_result = mysqli_fetch_assoc(mysqli_query($connection, $class_mode_query));
+$class_mode = $class_mode_result["mode"];
 ?>
 
 <!DOCTYPE html>
@@ -41,7 +46,7 @@ if ($row['role'] != 1) {
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Admin Class Test Page</title>
+    <title>Admin ClassPage | HereUp</title>
 
     <!-- Tailwind CSS -->
     <script src="https://cdn.jsdelivr.net/npm/@tailwindcss/browser@4"></script>
@@ -61,7 +66,7 @@ if ($row['role'] != 1) {
         </div>
 
         <nav class="flex-1 px-4 space-y-1">
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-xl transition-all">
+            <a href="dashboard.php" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-xl transition-all">
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-sm">Dashboard</span>
             </a>
@@ -115,7 +120,8 @@ if ($row['role'] != 1) {
                     <div class="w-10 h-10 rounded-full border-blue-50 overflow-hidden bg-gray-100 shadow-sm">
                         <img src="../../storage/profile-default-male.jpg" alt="Avatar" class="w-full h-full object-cover">
                     </div>
-                    <span class="text-sm font-medium text-gray-700"><?php echo htmlspecialchars($_SESSION['session']['username']); ?></span>
+                    <span class="text-sm font-medium text-gray-700"><?php echo htmlspecialchars($_SESSION['session']['username']); ?>
+                    </span>
                 </div>
             </div>
         </header>
