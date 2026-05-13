@@ -54,113 +54,6 @@ $class_code = $class_mode_result["unique_code"];
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        body { font-family: 'Segoe UI', sans-serif; }
-
-        .btn-action {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            padding: 8px 16px;
-            border-radius: 10px;
-            font-size: 13px;
-            font-weight: 500;
-            cursor: pointer;
-            transition: all 0.18s ease;
-            border: none;
-            outline: none;
-        }
-        .btn-action:hover { transform: translateY(-1px); }
-        .btn-action:active { transform: translateY(0); }
-
-        .btn-primary {
-            background: #93C5FD;
-            color: #1e40af;
-        }
-        .btn-primary:hover { background: #7BB8FB; box-shadow: 0 4px 12px rgba(147,197,253,0.45); }
-
-        .btn-secondary {
-            background: #F1F5F9;
-            color: #64748b;
-        }
-        .btn-secondary:hover { background: #E2E8F0; }
-
-        .btn-outline {
-            background: white;
-            color: #64748b;
-            border: 1.5px solid #E2E8F0;
-        }
-        .btn-outline:hover { background: #F8FAFC; border-color: #CBD5E1; }
-
-        .attendance-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 5px;
-            padding: 3px 9px;
-            border-radius: 7px;
-            font-size: 11px;
-            font-weight: 500;
-        }
-        .badge-hadir  { background: #DCFCE7; color: #16a34a; }
-        .badge-izin   { background: #FEF9C3; color: #ca8a04; }
-        .badge-sakit  { background: #DBEAFE; color: #2563eb; }
-        .badge-alpha  { background: #FEE2E2; color: #dc2626; }
-
-        .class-hero {
-            background: linear-gradient(135deg, #EFF6FF 0%, #DBEAFE 60%, #E0F2FE 100%);
-            border: 1px solid #BFDBFE;
-        }
-
-        .code-pill {
-            display: inline-flex;
-            align-items: center;
-            gap: 6px;
-            background: white;
-            border: 1.5px dashed #93C5FD;
-            color: #2563eb;
-            padding: 4px 12px;
-            border-radius: 999px;
-            font-size: 12px;
-            font-weight: 600;
-            letter-spacing: 0.08em;
-            cursor: pointer;
-            transition: all 0.15s;
-            user-select: none;
-        }
-        .code-pill:hover { background: #EFF6FF; }
-        .code-pill:active { transform: scale(0.97); }
-
-        .copy-tooltip {
-            position: relative;
-        }
-        .copy-tooltip::after {
-            content: 'Copied!';
-            position: absolute;
-            top: -28px;
-            left: 50%;
-            transform: translateX(-50%);
-            background: #1e40af;
-            color: white;
-            padding: 3px 8px;
-            border-radius: 6px;
-            font-size: 11px;
-            white-space: nowrap;
-            opacity: 0;
-            pointer-events: none;
-            transition: opacity 0.2s;
-        }
-        .copy-tooltip.show::after { opacity: 1; }
-
-        table th, table td { vertical-align: middle; }
-
-        .table-container {
-            overflow-x: auto;
-        }
-        table {
-            min-width: 700px;
-        }
-    </style>
 </head>
 <body class="bg-[#F8FAFC] min-h-screen flex">
 
@@ -238,47 +131,58 @@ $class_code = $class_mode_result["unique_code"];
         <main class="p-10 space-y-6">
 
             <!-- Class Hero Card -->
-            <div class="class-hero rounded-2xl px-8 py-6 flex items-center justify-between">
-                <div>
-                    <!-- Class Name -->
-                    <p class="text-[11px] font-semibold text-blue-400 uppercase tracking-widest mb-1">Admin Class Page</p>
-                    <h2 class="text-2xl font-bold text-blue-900 leading-tight mb-2">
-                        <?php echo htmlspecialchars($class_name); ?>
-                    </h2>
+            <div class="bg-white rounded-[2rem] p-8 shadow-sm">
+                <div class="flex items-center justify-between gap-4 flex-wrap">
 
-                    <?php if ($class_mode === "1") :?>
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-[11px] text-blue-400 font-medium">Admin Only Mode</span>
+                    <!-- Left: Class Info -->
+                    <div>
+                        <p class="text-[11px] font-semibold text-[#93C5FD] uppercase tracking-widest mb-1">Admin Class Page</p>
+                        <h2 class="text-xl font-bold text-gray-800 leading-tight mb-2">
+                            <?php echo htmlspecialchars($class_name); ?>
+                        </h2>
+
+                        <?php if ($class_mode === "1"): ?>
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500 shrink-0">
+                                <i data-lucide="shield" class="w-3 h-3"></i>
+                                Admin Only Mode
+                            </span>
+                        </div>
+
+                        <?php else: ?>
+                        <!-- Invitation Code -->
+                        <div class="flex items-center gap-2 mt-1">
+                            <span class="text-[11px] text-gray-400 font-medium">Invitation Code</span>
+                            <span id="codeBtn" onclick="copyCode(this)" title="Click to Copy"
+                                class="relative inline-flex items-center gap-1.5 bg-white border border-dashed border-[#93C5FD] text-blue-600 px-3 py-1 rounded-full text-[12px] font-semibold tracking-[0.08em] cursor-pointer transition-all hover:bg-blue-50 active:scale-[0.97] select-none">
+                                <i data-lucide="key-round" class="w-3 h-3"></i>
+                                <?php echo htmlspecialchars($class_code); ?>
+                                <i data-lucide="copy" class="w-3 h-3 opacity-50"></i>
+                                <span id="copyTooltip" class="absolute -top-7 left-1/2 -translate-x-1/2 bg-blue-900 text-white text-[11px] px-2 py-0.5 rounded-md whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-200">Copied!</span>
+                            </span>
+                        </div>
+                        <?php endif; ?>
                     </div>
 
-                    <?php else:?>
-                    <!-- Invitation Code -->
-                    <div class="flex items-center gap-2 mt-1">
-                        <span class="text-[11px] text-blue-400 font-medium">Invitation Code</span>
-                        <span class="code-pill copy-tooltip" id="codeBtn" onclick="copyCode(this)" title="Click for Copy">
-                            <i data-lucide="key-round" class="w-3 h-3"></i>
-                            <?php echo htmlspecialchars($class_code); ?>
-                            <i data-lucide="copy" class="w-3 h-3 opacity-50"></i>
-                        </span>
+                    <!-- Right: Action Buttons -->
+                    <div class="flex items-center gap-3 flex-wrap">
+                        <button onclick="alert('Create Session')"
+                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#93C5FD] text-white rounded-xl text-sm font-medium hover:bg-blue-400 transition-all shadow-sm">
+                            <i data-lucide="play-circle" class="w-4 h-4"></i>
+                            Create Session
+                        </button>
+                        <button onclick="alert('Session History')"
+                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
+                            <i data-lucide="history" class="w-4 h-4"></i>
+                            See All Session
+                        </button>
+                        <button onclick="alert('Add Member')"
+                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
+                            <i data-lucide="user-plus" class="w-4 h-4"></i>
+                            Add Member
+                        </button>
                     </div>
 
-                    <?php endif;?>
-                </div>
-
-                <!-- Action Buttons -->
-                <div class="flex items-center gap-3 flex-shrink-0">
-                    <button class="btn-action btn-primary" onclick="alert('Create Session')">
-                        <i data-lucide="play-circle" class="w-4 h-4"></i>
-                        Create Session
-                    </button>
-                    <button class="btn-action btn-outline" onclick="alert('Session History')">
-                        <i data-lucide="history" class="w-4 h-4"></i>
-                        See All Session
-                    </button>
-                    <button class="btn-action btn-outline" onclick="alert('Add Member')">
-                        <i data-lucide="user-plus" class="w-4 h-4"></i>
-                        Add Member
-                    </button>
                 </div>
             </div>
 
@@ -286,14 +190,13 @@ $class_code = $class_mode_result["unique_code"];
             <div class="bg-white rounded-[2rem] p-8 shadow-sm">
                 <h2 class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-6">All Your Member Class</h2>
 
-                <div class="table-container">
-                    <table class="w-full text-sm border-collapse">
+                <div class="overflow-x-auto">
+                    <table class="w-full text-sm border-collapse min-w-[700px]">
                         <thead>
                             <tr class="border-b border-gray-100">
                                 <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[5%]">No</th>
                                 <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[22%]">Fullname</th>
                                 <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[20%]">Username</th>
-                                <!-- Attendance columns -->
                                 <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[10%]">
                                     <span class="inline-flex items-center gap-1 justify-center">
                                         <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-green-400"></i>
@@ -338,25 +241,25 @@ $class_code = $class_mode_result["unique_code"];
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
-                                    <span class="attendance-badge badge-hadir">
+                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-green-50 text-green-600">
                                         <i data-lucide="check-circle-2" class="w-3 h-3"></i>
                                         12
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
-                                    <span class="attendance-badge badge-izin">
+                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-yellow-50 text-yellow-600">
                                         <i data-lucide="file-text" class="w-3 h-3"></i>
                                         2
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
-                                    <span class="attendance-badge badge-sakit">
+                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-blue-50 text-blue-600">
                                         <i data-lucide="heart-pulse" class="w-3 h-3"></i>
                                         1
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
-                                    <span class="attendance-badge badge-alpha">
+                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-red-50 text-red-500">
                                         <i data-lucide="x-circle" class="w-3 h-3"></i>
                                         0
                                     </span>
@@ -369,7 +272,7 @@ $class_code = $class_mode_result["unique_code"];
                                 </td>
                             </tr>
 
-                            <!-- Row 2 (example) -->
+                            <!-- Row 2 -->
                             <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
                                 <td class="py-4 text-xs text-gray-400">2</td>
                                 <td class="py-4 pl-3">
@@ -385,25 +288,25 @@ $class_code = $class_mode_result["unique_code"];
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
-                                    <span class="attendance-badge badge-hadir">
+                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-green-50 text-green-600">
                                         <i data-lucide="check-circle-2" class="w-3 h-3"></i>
                                         10
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
-                                    <span class="attendance-badge badge-izin">
+                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-yellow-50 text-yellow-600">
                                         <i data-lucide="file-text" class="w-3 h-3"></i>
                                         1
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
-                                    <span class="attendance-badge badge-sakit">
+                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-blue-50 text-blue-600">
                                         <i data-lucide="heart-pulse" class="w-3 h-3"></i>
                                         3
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
-                                    <span class="attendance-badge badge-alpha">
+                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-red-50 text-red-500">
                                         <i data-lucide="x-circle" class="w-3 h-3"></i>
                                         1
                                     </span>
@@ -429,8 +332,9 @@ $class_code = $class_mode_result["unique_code"];
         function copyCode(el) {
             const text = el.innerText.trim();
             navigator.clipboard.writeText(text).then(() => {
-                el.classList.add('show');
-                setTimeout(() => el.classList.remove('show'), 1500);
+                const tooltip = document.getElementById('copyTooltip');
+                tooltip.style.opacity = '1';
+                setTimeout(() => tooltip.style.opacity = '0', 1500);
             });
         }
     </script>
