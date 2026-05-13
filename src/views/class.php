@@ -218,7 +218,7 @@ $total             = mysqli_num_rows($user_class_result);
                     <div>
                         <h2 class="text-xl font-bold text-gray-800">My Classes</h2>
                         <p class="text-sm text-gray-400 mt-1">
-                            <?= $total ?> class<?= $total != 1 ? 'es' : '' ?> found
+                            All Your Joined or Created Classes
                         </p>
                     </div>
 
@@ -291,7 +291,6 @@ $total             = mysqli_num_rows($user_class_result);
 
                     <div class="border border-gray-100 rounded-2xl p-5 hover:shadow-md transition-all cursor-pointer flex flex-col" style="height:220px;">
 
-                        <!-- Card Header: CSS Grid, foto TIDAK BISA bergerak -->
                         <div class="card-header mb-3">
 
                             <!-- Kolom 1: Foto -->
@@ -343,8 +342,10 @@ $total             = mysqli_num_rows($user_class_result);
                                 <?php endif; ?>
                             </span>
                             <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500 font-mono shrink-0">
+                                <?php if($class["mode"] !== "1"):?>
                                 <i data-lucide="key" class="w-3 h-3"></i>
                                 <?= htmlspecialchars($class["unique_code"]) ?>
+                                <?php endif;?>
                             </span>
                         </div>
 
@@ -382,7 +383,7 @@ $total             = mysqli_num_rows($user_class_result);
                     </div>
                     <?php endif; ?>
 
-                </div><!-- end grid -->
+                </div>
 
             </div>
         </main>

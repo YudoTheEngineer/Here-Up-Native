@@ -92,6 +92,11 @@ if (mysqli_query($connection, $data)) {
         // Create New UserClass with Check if there is an Error
         if (mysqli_query($connection, $user_class)) {
 
+            if ($class_mode === "1") {
+                $update_code_query = "UPDATE class SET unique_code = '' WHERE id = '$class_id'";
+                mysqli_query($connection ,$update_code_query);
+            }
+
             // Head to Admin Class Page
             header("Location: ../views/admin-class.php?class_id=".$class_id);
             exit();
