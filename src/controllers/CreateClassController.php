@@ -49,7 +49,7 @@ if (!empty($_FILES['class_profile_picture']['name'])) {
     }
 
     $newFileName   = "class_" . time() . "_" . rand(100, 999) . "." . $fileExt;
-    $uploadPath    = "../../storage/class_profile_picture/" . $newFileName;
+    $uploadPath    = __DIR__."/../../storage/class_profile_picture/" . $newFileName;
 
     if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
         $_SESSION["error"] = "Failed to upload image.";
