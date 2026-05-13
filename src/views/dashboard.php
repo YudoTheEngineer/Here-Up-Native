@@ -101,7 +101,7 @@ $user_id = $_SESSION["session"]["id"];
                     
                     <div class="flex items-center gap-3 pl-4 border-l border-gray-100">
                         <div class="w-10 h-10 rounded-full border-blue-50 overflow-hidden bg-gray-100 shadow-sm">
-                            <img src="../../storage/default.svg" alt="Avatar" class="w-full h-full object-cover">
+                            <img src="../../storage/profile_picture/<?= htmlspecialchars($_SESSION['session']['profile_picture'])?>" alt="Avatar" class="w-full h-full object-cover">
                         </div>
                         <span class="text-sm font-medium text-gray-700"><?php echo htmlspecialchars($_SESSION['session']['username']); ?></span>
                     </div>
@@ -153,7 +153,6 @@ $user_id = $_SESSION["session"]["id"];
                                     <th class="sticky top-0 z-10 bg-white text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[8%] border-b border-gray-100">No</th>
                                     <th class="sticky top-0 z-10 bg-white text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[30%] border-b border-gray-100">Class Name</th>
                                     <th class="sticky top-0 z-10 bg-white text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[30%] border-b border-gray-100">Creator</th>
-                                    <th class="sticky top-0 z-10 bg-white text-right text-xs font-medium text-gray-400 tracking-wide pb-3 pr-1 w-[32%] border-b border-gray-100">Created At</th>
                                 </tr>
                             </thead>
                             <tbody>
@@ -170,29 +169,36 @@ $user_id = $_SESSION["session"]["id"];
                                         $class = mysqli_fetch_assoc(mysqli_query($connection, $class_query));
 
                                         $creator_id = $class['created_by'];
-                                        $creator_query = "SELECT username FROM user WHERE id = '$creator_id'";
+                                        $creator_query = "SELECT username, profile_picture FROM user WHERE id = '$creator_id'";
                                         $creator = mysqli_fetch_assoc(mysqli_query($connection, $creator_query));
 
                                 ?>
                                 <tr>
-                                    <td class="border-b border-gray-50 py-4 text-xs text-gray-400"><?=$row++?></td>
+                                    <td class="border-b border-gray-50 py-4 text-xs text-gray-400 pl-1"><?=$row++?></td>
                                     <td class="border-b border-gray-50 py-4 pl-3">
-                                        <span class="inline-flex items-center gap-1.5 bg-gray-100 rounded-md px-2.5 py-1 text-xs max-w-[100px] text-gray-500">
-                                            <i data-lucide="shield" class="w-3 h-3 shrink-0"></i>
-                                            <span class="truncate"><?= htmlspecialchars($class["name"])?></span>
-                                        </span>
+                                        <div class="inline-flex items-center gap-2 max-w-[160px]">
+                                            <div class="w-[28px] h-[28px] rounded overflow-hidden bg-gray-100 shrink-0">
+                                                <img src="../../storage/class_profile_picture/<?= htmlspecialchars($class['profile_picture']) ?>"
+                                                    alt="<?= htmlspecialchars($class['name']) ?>"
+                                                    class="w-full h-full object-cover">
+                                            </div>
+                                            <span class="truncate text-sm font-medium text-gray-500"><?= htmlspecialchars($class["name"]) ?></span>
+                                        </div>
                                     </td>
                                     <td class="border-b border-gray-50 py-4 pl-3">
-                                        <span class="inline-flex items-center gap-1.5 text-xs text-gray-500 max-w-[140px]">
-                                            <span class="w-[22px] h-[22px] rounded-full bg-blue-50 flex items-center justify-center text-[10px] font-medium text-blue-500 shrink-0"> <?= strtoupper(substr($creator['username'], 0, 1)) ?></span>
-                                            <span class="truncate"><?= htmlspecialchars($creator["username"])?></span> 
-                                        </span>
-                                    </td>
-                                    <td class="border-b border-gray-50 pr-1 py-4 text-right">
-                                        <span class="inline-flex items-center justify-end gap-1.5 text-xs text-gray-400">
-                                            <i data-lucide="calendar" class="w-3 h-3 shrink-0"></i>
-                                            <?= date('d-m-Y', strtotime($class['created_at']))?>
-                                        </span>
+                                        <div class="inline-flex items-center gap-1.5 max-w-[140px]">
+                                            <div class="w-[22px] h-[22px] rounded-full overflow-hidden bg-gray-100 shrink-0 flex items-center justify-center mt-1">
+                                                <img src="../../storage/profile_picture/<?= htmlspecialchars($creator['profile_picture']) ?>" 
+                                                    alt="<?= htmlspecialchars($creator['username']) ?>"
+                                                    class="w-full h-full object-cover"
+                                                    onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                                <span style="display:none" 
+                                                    class="w-full h-full bg-blue-50 flex items-center justify-center text-[10px] font-medium text-blue-500">
+                                                    <?= strtoupper(substr($creator['username'], 0, 1)) ?>
+                                                </span>
+                                            </div>
+                                            <span class="truncate text-xs text-gray-500 mt-1"><?= htmlspecialchars($creator["username"]) ?></span>
+                                        </div>
                                     </td>
                                 </tr>
                                 <?php endwhile; ?>
@@ -313,7 +319,7 @@ $user_id = $_SESSION["session"]["id"];
                             <div onclick="selectDefaultPhoto(<?= $i ?>)"
                                 id="default-opt-<?= $i ?>"
                                 class="w-full aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-[#93C5FD] transition-all">
-                                <img src="../../storage/class_default_profile/default-profile-<?= $i ?>.svg"
+                                <img src="../../storage/class_profile_picture/default-profile-<?= $i ?>.svg"
                                     alt="Default <?= $i ?>"
                                     class="w-full h-full object-cover">
                             </div>

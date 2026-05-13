@@ -17,6 +17,8 @@ $_SESSION["user_input"] = $_POST;
 $username = $_POST["username"];
 $email = $_POST["email"];
 $password = $_POST["password"];
+$random_profile = rand(1, 20);
+$profile_picture = "default-profile-".$random_profile.".svg";
 
 // Check if Username are too short or long
 $username_length = strlen($username);
@@ -84,8 +86,8 @@ $is_active = 1;
 
 // Insert to Database Variable
 $data = "
-INSERT INTO user (username, email, password, is_active) 
-VALUES ('$username', '$email', '$hash', $is_active)
+INSERT INTO user (username, email, password, is_active, profile_picture) 
+VALUES ('$username', '$email', '$hash', '$is_active', '$profile_picture')
 ";
 
 // Create New User with Check if there is an Error

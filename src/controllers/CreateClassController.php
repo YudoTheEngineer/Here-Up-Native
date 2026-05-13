@@ -28,13 +28,49 @@ function generateInvitationCode($connection) {
     return $code;
 }
 
+// Handle Class Profile Picture
+if (!empty($_FILES['class_profile_picture']['name'])) {
+    
+    // Upload foto sendiri
+    $file     = $_FILES['class_profile_picture'];
+    $fileExt  = strtolower(pathinfo($file['name'], PATHINFO_EXTENSION));
+    $allowed  = ['jpg', 'jpeg', 'png', 'webp', 'svg'];
+
+    if (!in_array($fileExt, $allowed)) {
+        $_SESSION["error"] = "Invalid file type.";
+        header("Location: ../views/dashboard.php");
+        exit();
+    }
+
+    if ($file['size'] > 2 * 1024 * 1024) {
+        $_SESSION["error"] = "File too large. Max 2MB.";
+        header("Location: ../views/dashboard.php");
+        exit();
+    }
+
+    $newFileName   = "class_" . time() . "_" . rand(100, 999) . "." . $fileExt;
+    $uploadPath    = "../../storage/class_profile_picture/" . $newFileName;
+
+    if (!move_uploaded_file($file['tmp_name'], $uploadPath)) {
+        $_SESSION["error"] = "Failed to upload image.";
+        header("Location: ../views/dashboard.php");
+        exit();
+    }
+
+    $profile_picture = $newFileName;
+
+} else {
+    // Pakai default photo yang dipilih
+    $profile_picture = $_POST['class_default_photo'] ?? 'default-profile-1.svg';
+}
+
 // Run Unique Code Function
 $invitation_code = generateInvitationCode($connection);
 
 // Create Class Variable
 $data = "
-INSERT INTO class (name, description, mode, created_by, unique_code)
-VALUES ('$class_name', '$class_description', '$class_mode', '$class_creator', '$invitation_code')
+INSERT INTO class (name, description, mode, created_by, unique_code, profile_picture)
+VALUES ('$class_name', '$class_description', '$class_mode', '$class_creator', '$invitation_code', '$profile_picture')
 ";
 
 // Create New Class with Validation
