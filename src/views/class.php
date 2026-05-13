@@ -21,8 +21,8 @@ $filter_role = isset($_GET['role']) ? $_GET['role'] : '';
 // Single JOIN query with search & filter
 $user_class_query = "
     SELECT uc.role, c.id as class_id, c.name, c.description, c.mode, c.unique_code,
-           c.profile_picture, c.created_at,
-           u.username as creator_username, u.profile_picture as creator_picture
+    c.profile_picture, c.created_at,
+    u.username as creator_username, u.profile_picture as creator_picture
     FROM user_class uc
     JOIN class c ON uc.class_id = c.id
     JOIN user u ON c.created_by = u.id
@@ -54,88 +54,6 @@ $total             = mysqli_num_rows($user_class_result);
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
-
-    <style>
-        /* Card header pakai CSS Grid agar foto TIDAK ikut bergerak
-           saat nama kelas panjang atau pendek */
-        .card-header {
-            display: grid;
-            grid-template-columns: 48px 1fr auto;
-            column-gap: 12px;
-            align-items: start;    /* semua kolom rata atas */
-            height: 54px;          /* tinggi tetap */
-            overflow: hidden;      /* potong kalau lebih */
-            flex-shrink: 0;
-        }
-
-        /* Foto: selalu 48x48, tidak bisa menyusut atau membesar */
-        .card-photo {
-            width: 48px;
-            height: 48px;
-            border-radius: 12px;
-            overflow: hidden;
-            background: #F3F4F6;
-        }
-        .card-photo img {
-            width: 100%;
-            height: 100%;
-            object-fit: cover;
-            display: block;
-        }
-
-        /* Nama + member count */
-        .card-name {
-            overflow: hidden;
-            padding-top: 1px;
-        }
-        .card-name h3 {
-            font-size: 13px;
-            font-weight: 600;
-            color: #374151;
-            line-height: 1.35;
-            word-break: break-word;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-        }
-        .card-name p {
-            font-size: 11px;
-            color: #9CA3AF;
-            margin-top: 2px;
-        }
-
-        /* Badge role: tidak berubah posisi */
-        .card-badge {
-            display: inline-flex;
-            align-items: center;
-            gap: 4px;
-            padding: 3px 8px;
-            border-radius: 999px;
-            font-size: 10px;
-            font-weight: 700;
-            text-transform: uppercase;
-            letter-spacing: 0.05em;
-            white-space: nowrap;
-            flex-shrink: 0;
-        }
-        .card-badge.admin  { background: #EFF6FF; color: #3B82F6; }
-        .card-badge.member { background: #F0FDF4; color: #22C55E; }
-
-        /* Description: tinggi tetap 2 baris */
-        .card-desc {
-            height: 32px;
-            font-size: 12px;
-            color: #9CA3AF;
-            line-height: 1.5;
-            display: -webkit-box;
-            -webkit-line-clamp: 2;
-            -webkit-box-orient: vertical;
-            overflow: hidden;
-            flex-shrink: 0;
-            margin-bottom: 0;
-        }
-    </style>
 </head>
 <body class="bg-[#F8FAFC] min-h-screen flex">
 
@@ -288,85 +206,87 @@ $total             = mysqli_num_rows($user_class_result);
                         $member_count_query = "SELECT COUNT(*) as total FROM user_class WHERE class_id = '$class_id'";
                         $member_count       = mysqli_fetch_assoc(mysqli_query($connection, $member_count_query));
                     ?>
-
-                    <div class="border border-gray-100 rounded-2xl p-5 hover:shadow-md transition-all cursor-pointer flex flex-col" style="height:220px;">
-
-                        <div class="card-header mb-3">
-
-                            <!-- Kolom 1: Foto -->
-                            <div class="card-photo">
-                                <img src="../../storage/class_profile_picture/<?= htmlspecialchars($class["profile_picture"])?>" alt="Class">
-                            </div>
-
-                            <!-- Kolom 2: Nama + member -->
-                            <div class="card-name">
-                                <h3><?= htmlspecialchars($class["name"]) ?></h3>
-                                <p><?= $member_count['total'] . ' Member' . ($member_count['total'] != 1 ? 's' : '') ?></p>
-                            </div>
-
-                            <!-- Kolom 3: Badge -->
-                            <?php if ($user_role["role"] == 1): ?>
-                            <span class="card-badge admin">
-                                <i data-lucide="shield-check" class="w-3 h-3"></i>
-                                Admin
-                            </span>
-                            <?php else: ?>
-                            <span class="card-badge member">
-                                <i data-lucide="user" class="w-3 h-3"></i>
-                                Member
-                            </span>
-                            <?php endif; ?>
-
-                        </div>
-
-                        <!-- Description: tinggi tetap -->
-                        <p class="card-desc mb-3">
-                            <?= $class["description"] !== "" ? htmlspecialchars($class["description"]) : "" ?>
-                        </p>
-
-                        <!-- Spacer -->
-                        <div class="flex-1"></div>
-
-                        <!-- Info Row -->
-                        <div class="flex items-center gap-2 mb-3 shrink-0">
-                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500 shrink-0">
-                                <?php if ($class["mode"] == "1"): ?>
-                                <i data-lucide="shield" class="w-3 h-3"></i>
-                                Admin Only
-                                <?php elseif ($class["mode"] == "2"): ?>
-                                <i data-lucide="users" class="w-3 h-3"></i>
-                                Member
-                                <?php else: ?>
-                                <i data-lucide="qr-code" class="w-3 h-3"></i>
-                                QR Code
-                                <?php endif; ?>
-                            </span>
-                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500 font-mono shrink-0">
-                                <?php if($class["mode"] !== "1"):?>
-                                <i data-lucide="key" class="w-3 h-3"></i>
-                                <?= htmlspecialchars($class["unique_code"]) ?>
-                                <?php endif;?>
-                            </span>
-                        </div>
-
-                        <!-- Card Footer -->
-                        <div class="flex items-center justify-between pt-3 border-t border-gray-50 shrink-0">
-                            <div class="flex items-center gap-2 min-w-0">
-                                <div class="w-5 h-5 rounded-full overflow-hidden bg-gray-100 shrink-0">
-                                    <img src="../../storage/profile_picture/<?= htmlspecialchars($creator["profile_picture"])?>"
-                                        alt="Creator" class="w-full h-full object-cover">
+                    <a href="<?= $class["mode"] === '1' ? htmlspecialchars('admin-class.php?class_id='.$class_id) : htmlspecialchars('member-class.php?class_id='.$class_id)?>">
+                        <div class="border border-gray-100 rounded-2xl p-5 hover:shadow-md transition-all cursor-pointer flex flex-col h-[220px]">
+                            <!-- card-header -->
+                            <div class="grid mb-3 overflow-hidden shrink-0" style="grid-template-columns: 48px 1fr auto; column-gap: 12px; align-items: start; height: 54px;">
+                                <!-- Kolom 1: Foto -->
+                                <div class="w-12 h-12 rounded-xl overflow-hidden bg-gray-100 shrink-0">
+                                    <img src="../../storage/class_profile_picture/<?= htmlspecialchars($class["profile_picture"])?>" alt="Class" class="w-full h-full object-cover block">
                                 </div>
-                                <span class="text-[11px] text-gray-400 truncate"><?= htmlspecialchars($creator["username"]) ?></span>
+
+                                <!-- Kolom 2: Nama + member -->
+                                <div class="overflow-hidden pt-px">
+                                    <h3 class="text-[13px] font-semibold text-gray-700 leading-[1.35] break-words line-clamp-2 overflow-hidden"><?= htmlspecialchars($class["name"]) ?></h3>
+                                    <p class="text-[11px] text-gray-400 mt-0.5"><?= $member_count['total'] . ' Member' . ($member_count['total'] != 1 ? 's' : '') ?></p>
+                                </div>
+
+                                <!-- Kolom 3: Badge -->
+                                <?php if ($user_role["role"] == 1): ?>
+                                <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-full text-[10px] font-bold uppercase tracking-[0.05em] whitespace-nowrap shrink-0 bg-blue-50 text-blue-500">
+                                    <i data-lucide="shield-check" class="w-3 h-3"></i>
+                                    Admin
+                                </span>
+                                <?php else: ?>
+                                <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-full text-[10px] font-bold uppercase tracking-[0.05em] whitespace-nowrap shrink-0 bg-green-50 text-green-500">
+                                    <i data-lucide="user" class="w-3 h-3"></i>
+                                    Member
+                                </span>
+                                <?php endif; ?>
+
                             </div>
-                            <span class="inline-flex items-center gap-1 text-[11px] text-gray-400 shrink-0">
-                                <i data-lucide="calendar" class="w-3 h-3"></i>
-                                <?= date('d-m-Y', strtotime($class["created_at"])) ?>
-                            </span>
+
+                            <!-- Description -->
+                            <p class="h-8 text-[12px] text-gray-400 leading-[1.5] line-clamp-2 overflow-hidden shrink-0 mb-3">
+                                <?= $class["description"] !== "" ? htmlspecialchars($class["description"]) : "" ?>
+                            </p>
+
+                            <!-- Spacer -->
+                            <div class="flex-1"></div>
+
+                            <!-- Info Row -->
+                            <div class="flex items-center gap-2 mb-3 shrink-0">
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500 shrink-0">
+                                    <?php if ($class["mode"] == "1"): ?>
+                                    <i data-lucide="shield" class="w-3 h-3"></i>
+                                    Admin Only
+                                    <?php elseif ($class["mode"] == "2"): ?>
+                                    <i data-lucide="users" class="w-3 h-3"></i>
+                                    Member
+                                    <?php else: ?>
+                                    <i data-lucide="qr-code" class="w-3 h-3"></i>
+                                    QR Code
+                                    <?php endif; ?>
+                                </span>
+
+                                <?php if($class["mode"] !== "1"):?>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500 font-mono shrink-0">
+                                    <i data-lucide="key" class="w-3 h-3"></i>
+                                    <?= htmlspecialchars($class["unique_code"]) ?>
+                                </span>
+                                <?php endif;?>
+                            </div>
+
+                            <!-- Card Footer -->
+                            <div class="flex items-center justify-between pt-3 border-t border-gray-50 shrink-0">
+                                <div class="flex items-center gap-2 min-w-0">
+                                    <div class="w-5 h-5 rounded-full overflow-hidden bg-gray-100 shrink-0">
+                                        <img src="../../storage/profile_picture/<?= htmlspecialchars($creator["profile_picture"])?>"
+                                            alt="Creator" class="w-full h-full object-cover">
+                                    </div>
+                                    <span class="text-[11px] text-gray-400 truncate"><?= htmlspecialchars($creator["username"]) ?></span>
+                                </div>
+                                <span class="inline-flex items-center gap-1 text-[11px] text-gray-400 shrink-0">
+                                    <i data-lucide="calendar" class="w-3 h-3"></i>
+                                    <?= date('d-m-Y', strtotime($class["created_at"])) ?>
+                                </span>
+                            </div>
+
                         </div>
 
-                    </div>
+                        <?php endwhile; ?>
 
-                    <?php endwhile; ?>
+                    </a>
 
                     <!-- Empty State -->
                     <?php if ($total === 0): ?>

@@ -180,7 +180,7 @@ $class_code = $class_mode_result["unique_code"];
                 <i data-lucide="layout-dashboard" class="w-5 h-5"></i>
                 <span class="text-sm">Dashboard</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 bg-[#93C5FD] text-white rounded-xl font-medium transition-all">
+            <a href="class.php" class="flex items-center gap-3 px-4 py-3 bg-[#93C5FD] text-white rounded-xl font-medium transition-all">
                 <i data-lucide="presentation" class="w-5 h-5"></i>
                 <span class="text-sm">Class</span>
             </a>
@@ -245,15 +245,24 @@ $class_code = $class_mode_result["unique_code"];
                     <h2 class="text-2xl font-bold text-blue-900 leading-tight mb-2">
                         <?php echo htmlspecialchars($class_name); ?>
                     </h2>
+
+                    <?php if ($class_mode === "1") :?>
+                    <div class="flex items-center gap-2 mt-1">
+                        <span class="text-[11px] text-blue-400 font-medium">Admin Only Mode</span>
+                    </div>
+
+                    <?php else:?>
                     <!-- Invitation Code -->
                     <div class="flex items-center gap-2 mt-1">
                         <span class="text-[11px] text-blue-400 font-medium">Invitation Code</span>
-                        <span class="code-pill copy-tooltip" id="codeBtn" onclick="copyCode(this)" title="Klik untuk menyalin">
+                        <span class="code-pill copy-tooltip" id="codeBtn" onclick="copyCode(this)" title="Click for Copy">
                             <i data-lucide="key-round" class="w-3 h-3"></i>
                             <?php echo htmlspecialchars($class_code); ?>
                             <i data-lucide="copy" class="w-3 h-3 opacity-50"></i>
                         </span>
                     </div>
+
+                    <?php endif;?>
                 </div>
 
                 <!-- Action Buttons -->
