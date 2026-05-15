@@ -1,0 +1,10 @@
+<div class="flex items-center gap-2 mt-1">
+    <span class="text-[11px] text-gray-400 font-medium">Invitation Code</span>
+    <span id="codeBtn" onclick="copyCode(this)" title="Click to Copy"
+        class="relative inline-flex items-center gap-1.5 bg-white border border-dashed border-[#93C5FD] text-blue-600 px-3 py-1 rounded-full text-[12px] font-semibold tracking-[0.08em] cursor-pointer transition-all hover:bg-blue-50 active:scale-[0.97] select-none">
+        <i data-lucide="key-round" class="w-3 h-3"></i>
+        <?php echo htmlspecialchars($class["unique_code"]); ?>
+        <i data-lucide="copy" class="w-3 h-3 opacity-50"></i>
+        <span id="copyTooltip" class="absolute -top-7 left-1/2 -translate-x-1/2 bg-blue-900 text-white text-[11px] px-2 py-0.5 rounded-md whitespace-nowrap opacity-0 pointer-events-none transition-opacity duration-200">Copied!</span>
+    </span>
+</div>

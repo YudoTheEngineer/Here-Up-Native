@@ -238,7 +238,7 @@ $total             = mysqli_num_rows($user_class_result);
 
                             <!-- Description -->
                             <p class="h-8 text-[12px] text-gray-400 leading-[1.5] line-clamp-2 overflow-hidden shrink-0 mb-3">
-                                <?= $class["description"] !== "" ? htmlspecialchars($class["description"]) : "" ?>
+                                <?= $class["description"] !== "" ? htmlspecialchars($class["description"]) : "..." ?>
                             </p>
 
                             <!-- Spacer -->
