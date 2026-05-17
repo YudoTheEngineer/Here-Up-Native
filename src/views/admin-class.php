@@ -37,6 +37,8 @@ if ($row['role'] != 1) {
 // Check Class Mode
 $class_mode_query = "SELECT * FROM `class` WHERE id = '$class_id' LIMIT 1";
 $class = mysqli_fetch_assoc(mysqli_query($connection, $class_mode_query));
+$member_query = "SELECT * FROM member WHERE class_id = $class_id";
+$member_result = mysqli_query($connection, $member_query);
 ?>
 
 <!DOCTYPE html>
@@ -208,31 +210,40 @@ $class = mysqli_fetch_assoc(mysqli_query($connection, $class_mode_query));
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Row 1 -->
+                            <?php
+                                $row = 1;
+                                while($member = mysqli_fetch_assoc($member_result)):
+                            ?>
                             <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                                <td class="py-4 text-xs text-gray-400">1</td>
+                                <td class="py-4 text-xs text-gray-400"><?= $row++;?></td>
                                 <td class="py-4 pl-3">
                                     <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
-                                        <span class="w-[22px] h-[22px] rounded-full bg-blue-50 flex items-center justify-center text-[10px] font-medium text-blue-500">Y</span>
-                                        Yudo Harun Wardhana
+                                        <div class="w-[22px] h-[22px] rounded-full overflow-hidden flex-shrink-0">
+                                            <img src="../../storage/profile_picture/<?= htmlspecialchars($member['profile_picture']) ?>" 
+                                            alt="<?= htmlspecialchars($member['username']) ?>"
+                                            class="w-full h-full object-cover"
+                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                        </div>
+                                        
+                                        <?= htmlspecialchars($member["fullname"]);?>
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
                                     <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-green-50 text-green-600">
                                         <i data-lucide="check-circle-2" class="w-3 h-3"></i>
-                                        12
+                                        0
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
                                     <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-yellow-50 text-yellow-600">
                                         <i data-lucide="file-text" class="w-3 h-3"></i>
-                                        2
+                                        0
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
                                     <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-blue-50 text-blue-600">
                                         <i data-lucide="heart-pulse" class="w-3 h-3"></i>
-                                        1
+                                        0
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
@@ -244,51 +255,11 @@ $class = mysqli_fetch_assoc(mysqli_query($connection, $class_mode_query));
                                 <td class="py-4 text-right">
                                     <span class="inline-flex items-center justify-end gap-1.5 text-xs text-gray-400">
                                         <i data-lucide="calendar" class="w-3 h-3"></i>
-                                        11-09-2024
+                                        <?= date("d-m-Y", strtotime($member["created_at"]))?>
                                     </span>
                                 </td>
                             </tr>
-
-                            <!-- Row 2 -->
-                            <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                                <td class="py-4 text-xs text-gray-400">2</td>
-                                <td class="py-4 pl-3">
-                                    <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
-                                        <span class="w-[22px] h-[22px] rounded-full bg-purple-50 flex items-center justify-center text-[10px] font-medium text-purple-500">A</span>
-                                        Adhyasta Arkananta Athaya
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-green-50 text-green-600">
-                                        <i data-lucide="check-circle-2" class="w-3 h-3"></i>
-                                        10
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-yellow-50 text-yellow-600">
-                                        <i data-lucide="file-text" class="w-3 h-3"></i>
-                                        1
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-blue-50 text-blue-600">
-                                        <i data-lucide="heart-pulse" class="w-3 h-3"></i>
-                                        3
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-red-50 text-red-500">
-                                        <i data-lucide="x-circle" class="w-3 h-3"></i>
-                                        1
-                                    </span>
-                                </td>
-                                <td class="py-4 text-right">
-                                    <span class="inline-flex items-center justify-end gap-1.5 text-xs text-gray-400">
-                                        <i data-lucide="calendar" class="w-3 h-3"></i>
-                                        15-09-2024
-                                    </span>
-                                </td>
-                            </tr>
+                            <?php endwhile;?>
                         </tbody>
                     </table>
                 </div>
@@ -297,86 +268,84 @@ $class = mysqli_fetch_assoc(mysqli_query($connection, $class_mode_query));
         </main>
     </div>
 
-    <!-- ===================== ADD MEMBER MODAL ===================== -->
     <div id="addMemberModal" class="fixed inset-0 hidden items-center justify-center z-50">
-
+    
         <!-- Overlay -->
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="closeAddMemberModal()"></div>
-
+    
         <!-- Modal Box -->
         <div class="relative bg-white w-[500px] max-h-[90vh] overflow-y-auto rounded-2xl border border-[#DEE1E6] p-6 z-10">
-
+    
             <!-- Header -->
             <div class="flex items-center gap-3 mb-4">
                 <img class="h-[30px]" src="../../public/images/icon.png" alt="Icon">
                 <h1 class="text-xl text-[#87CEEB] font-bold">Add Member</h1>
             </div>
             <p class="text-sm text-[#565D6D] mb-4">Invite a new member to join this class</p>
-
-            <!-- Form (belum aktif ke PHP) -->
-            <div class="space-y-4">
-
+    
+            <form id="formAddMember" action="../controllers/MemberClassController.php" method="POST" enctype="multipart/form-data" class="space-y-4">
+    
                 <!-- Fullname -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-1">Full Name</label>
                     <div class="relative">
                         <input
                             type="text"
-                            id="member_fullname"
-                            name="member_fullname"
-                            placeholder="Enter member's full name"
+                            id="fullname"
+                            name="fullname"
+                            placeholder="Enter member's fullname"
                             class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm"
                         >
                         <i data-lucide="user" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
-                    <p id="error-member_fullname" class="hidden text-xs text-red-400 mt-1"></p>
+                    <p id="error-fullname" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
-
+    
                 <!-- Gender -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-2">Gender</label>
                     <div class="flex gap-3">
                         <label id="gender-male-label"
-                            onclick="selectGender('male')"
+                            onclick="selectGender(1)"
                             class="flex-1 flex items-center gap-2.5 px-4 py-2.5 border-2 border-[#DEE1E6] rounded-xl cursor-pointer transition-all hover:border-[#93C5FD]">
                             <i data-lucide="mars" class="w-4 h-4 text-blue-400"></i>
                             <span class="text-sm text-[#565D6D]">Male</span>
                         </label>
                         <label id="gender-female-label"
-                            onclick="selectGender('female')"
+                            onclick="selectGender(2)"
                             class="flex-1 flex items-center gap-2.5 px-4 py-2.5 border-2 border-[#DEE1E6] rounded-xl cursor-pointer transition-all hover:border-[#93C5FD]">
                             <i data-lucide="venus" class="w-4 h-4 text-pink-400"></i>
                             <span class="text-sm text-[#565D6D]">Female</span>
                         </label>
                     </div>
-                    <input type="hidden" id="member_gender" name="member_gender" value="">
-                    <p id="error-member_gender" class="hidden text-xs text-red-400 mt-1"></p>
+                    <input type="hidden" id="gender" name="gender" value="">
+                    <p id="error-gender" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
-
+    
                 <!-- Profile Photo -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-2">Profile Photo</label>
-
+    
                     <!-- Tab Toggle -->
                     <div class="flex gap-2 mb-3">
-                        <button type="button" onclick="switchMemberPhotoTab('default')" id="member-tab-default"
+                        <button type="button" onclick="switchPhotoTab('default')" id="tab-default"
                             class="text-xs px-3 py-1.5 rounded-lg bg-[#93C5FD] text-white transition-all">
                             Default Photo
                         </button>
-                        <button type="button" onclick="switchMemberPhotoTab('upload')" id="member-tab-upload"
+                        <button type="button" onclick="switchPhotoTab('upload')" id="tab-upload"
                             class="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all">
                             Upload Photo
                         </button>
                     </div>
-
+    
                     <!-- Panel: Default Photos -->
-                    <div id="member-panel-default">
+                    <div id="panel-default">
                         <div class="w-full border border-[#DEE1E6] rounded-lg p-3 bg-[#FAFAFA]">
                             <p class="text-[11px] text-gray-400 mb-2">Pick one of the default photos</p>
-                            <div class="grid grid-cols-5 gap-2" id="member-default-photo-grid">
+                            <div class="grid grid-cols-5 gap-2" id="default-photo-grid">
                                 <?php for ($i = 1; $i <= 20; $i++): ?>
-                                <div onclick="selectMemberDefaultPhoto(<?= $i ?>)"
-                                    id="member-default-opt-<?= $i ?>"
+                                <div onclick="selectDefaultPhoto(<?= $i ?>)"
+                                    id="default-opt-<?= $i ?>"
                                     class="w-full aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-[#93C5FD] transition-all">
                                     <img src="../../storage/profile_picture/default-profile-<?= $i ?>.svg"
                                         alt="Default <?= $i ?>"
@@ -385,37 +354,37 @@ $class = mysqli_fetch_assoc(mysqli_query($connection, $class_mode_query));
                                 <?php endfor; ?>
                             </div>
                         </div>
-                        <input type="hidden" name="member_default_photo" id="member_default_photo" value="default-profile-1.svg">
+                        <input type="hidden" name="default_profile_picture" id="default_photo" value="default-profile-1.svg">
                     </div>
-
+    
                     <!-- Panel: Upload -->
-                    <div id="member-panel-upload" class="hidden">
+                    <div id="panel-upload" class="hidden">
                         <div class="w-full border border-[#DEE1E6] rounded-lg p-4 flex items-center gap-4 bg-[#FAFAFA]">
-
+    
                             <!-- Thumbnail Preview -->
                             <div class="w-14 h-14 rounded-xl bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="image" class="w-6 h-6 text-gray-300" id="member-photo-placeholder-icon"></i>
-                                <img id="member-picture-preview" class="hidden w-full h-full object-cover" src="" alt="Preview">
+                                <i data-lucide="image" class="w-6 h-6 text-gray-300" id="photo-placeholder-icon"></i>
+                                <img id="picture-preview" class="hidden w-full h-full object-cover" src="" alt="Preview">
                             </div>
-
+    
                             <!-- Text + Button -->
                             <div class="flex-1 min-w-0">
-                                <p class="text-xs text-[#565D6D] font-medium mb-0.5" id="member-picture-filename">No file chosen</p>
+                                <p class="text-xs text-[#565D6D] font-medium mb-0.5" id="picture-filename">No file chosen</p>
                                 <p class="text-[11px] text-gray-400">JPG, PNG, WEBP — max 2MB</p>
                             </div>
-
+    
                             <!-- Trigger Button -->
-                            <button type="button" onclick="document.getElementById('member_profile_picture').click()"
+                            <button type="button" onclick="document.getElementById('profile_picture').click()"
                                 class="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#DEE1E6] rounded-lg text-xs text-[#565D6D] hover:bg-gray-50 transition-all">
                                 <i data-lucide="upload" class="w-3.5 h-3.5"></i>
                                 Browse
                             </button>
                         </div>
-                        <input type="file" name="member_profile_picture" id="member_profile_picture" accept="image/*" class="hidden"
-                            onchange="previewMemberPhoto(event)">
+                        <input type="file" name="profile_picture" id="profile_picture" accept="image/*" class="hidden"
+                            onchange="previewPhoto(event)">
                     </div>
                 </div>
-
+    
                 <!-- Buttons -->
                 <div class="flex gap-3 mt-5">
                     <button
@@ -431,183 +400,14 @@ $class = mysqli_fetch_assoc(mysqli_query($connection, $class_mode_query));
                         Cancel
                     </button>
                 </div>
-
-            </div>
+                <input type="hidden" name="class_id" value="<?php echo $class_id; ?>">
+            </form>
         </div>
     </div>
-    <!-- ===================== END ADD MEMBER MODAL ===================== -->
 
+    <script src="../scripts/admin-class-validation.js"></script>
     <script>
         lucide.createIcons();
-
-        function copyCode(el) {
-            const text = el.innerText.trim();
-            navigator.clipboard.writeText(text).then(() => {
-                const tooltip = document.getElementById('copyTooltip');
-                tooltip.style.opacity = '1';
-                setTimeout(() => tooltip.style.opacity = '0', 1500);
-            });
-        }
-
-        /* ── Add Member Modal ── */
-        function openAddMemberModal() {
-            const modal = document.getElementById('addMemberModal');
-            modal.classList.remove('hidden');
-            modal.classList.add('flex');
-        }
-
-        function closeAddMemberModal() {
-            const modal = document.getElementById('addMemberModal');
-            modal.classList.add('hidden');
-            modal.classList.remove('flex');
-
-            // Reset fields
-            document.getElementById('member_fullname').value = '';
-            document.getElementById('member_gender').value   = '';
-
-            // Reset gender UI
-            document.getElementById('gender-male-label').classList.remove('border-[#93C5FD]', 'bg-blue-50');
-            document.getElementById('gender-female-label').classList.remove('border-[#93C5FD]', 'bg-pink-50');
-            document.getElementById('gender-male-label').classList.add('border-[#DEE1E6]');
-            document.getElementById('gender-female-label').classList.add('border-[#DEE1E6]');
-
-            // Reset photo tab ke default
-            switchMemberPhotoTab('default');
-            document.getElementById('member_default_photo').value = 'default-profile-1.svg';
-            document.querySelectorAll('#member-default-photo-grid > div').forEach(el => {
-                el.classList.remove('border-[#93C5FD]');
-                el.classList.add('border-transparent');
-            });
-            document.getElementById('member_profile_picture').value = '';
-            document.getElementById('member-picture-preview').classList.add('hidden');
-            document.getElementById('member-picture-preview').src = '';
-            document.getElementById('member-photo-placeholder-icon').classList.remove('hidden');
-            document.getElementById('member-picture-filename').textContent = 'No file chosen';
-
-            // Hide error messages
-            ['member_fullname', 'member_gender'].forEach(id => {
-                const el = document.getElementById('error-' + id);
-                if (el) { el.classList.add('hidden'); el.textContent = ''; }
-            });
-        }
-
-        function selectGender(val) {
-            document.getElementById('member_gender').value = val;
-
-            const maleLabel   = document.getElementById('gender-male-label');
-            const femaleLabel = document.getElementById('gender-female-label');
-
-            // Reset keduanya
-            maleLabel.classList.remove('border-[#93C5FD]', 'bg-blue-50');
-            femaleLabel.classList.remove('border-[#93C5FD]', 'bg-pink-50');
-            maleLabel.classList.add('border-[#DEE1E6]');
-            femaleLabel.classList.add('border-[#DEE1E6]');
-
-            if (val === 'male') {
-                maleLabel.classList.remove('border-[#DEE1E6]');
-                maleLabel.classList.add('border-[#93C5FD]', 'bg-blue-50');
-            } else {
-                femaleLabel.classList.remove('border-[#DEE1E6]');
-                femaleLabel.classList.add('border-[#93C5FD]', 'bg-pink-50');
-            }
-        }
-
-        function switchMemberPhotoTab(tab) {
-            const isDefault = tab === 'default';
-
-            document.getElementById('member-panel-default').classList.toggle('hidden', !isDefault);
-            document.getElementById('member-panel-upload').classList.toggle('hidden', isDefault);
-
-            document.getElementById('member-tab-default').className = isDefault
-                ? 'text-xs px-3 py-1.5 rounded-lg bg-[#93C5FD] text-white transition-all'
-                : 'text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all';
-
-            document.getElementById('member-tab-upload').className = !isDefault
-                ? 'text-xs px-3 py-1.5 rounded-lg bg-[#93C5FD] text-white transition-all'
-                : 'text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all';
-
-            if (isDefault) {
-                document.getElementById('member_profile_picture').value = '';
-                document.getElementById('member-picture-preview').classList.add('hidden');
-                document.getElementById('member-photo-placeholder-icon').classList.remove('hidden');
-                document.getElementById('member-picture-filename').textContent = 'No file chosen';
-            } else {
-                document.getElementById('member_default_photo').value = '';
-                document.querySelectorAll('#member-default-photo-grid > div').forEach(el => {
-                    el.classList.remove('border-[#93C5FD]');
-                    el.classList.add('border-transparent');
-                });
-            }
-        }
-
-        function selectMemberDefaultPhoto(num) {
-            document.querySelectorAll('#member-default-photo-grid > div').forEach(el => {
-                el.classList.remove('border-[#93C5FD]');
-                el.classList.add('border-transparent');
-            });
-
-            const selected = document.getElementById('member-default-opt-' + num);
-            if (selected) {
-                selected.classList.remove('border-transparent');
-                selected.classList.add('border-[#93C5FD]');
-            }
-
-            document.getElementById('member_default_photo').value = 'default-profile-' + num + '.svg';
-        }
-
-        function previewMemberPhoto(event) {
-            const file = event.target.files[0];
-            if (!file) return;
-
-            document.getElementById('member-picture-filename').textContent = file.name;
-
-            const reader = new FileReader();
-            reader.onload = (e) => {
-                const preview = document.getElementById('member-picture-preview');
-                const icon    = document.getElementById('member-photo-placeholder-icon');
-                preview.src = e.target.result;
-                preview.classList.remove('hidden');
-                icon.classList.add('hidden');
-            };
-            reader.readAsDataURL(file);
-        }
-
-        function handleAddMember() {
-            let valid = true;
-
-            // Validate fullname
-            const fullname    = document.getElementById('member_fullname').value.trim();
-            const fullnameErr = document.getElementById('error-member_fullname');
-            if (!fullname) {
-                fullnameErr.textContent = 'Full name is required.';
-                fullnameErr.classList.remove('hidden');
-                valid = false;
-            } else {
-                fullnameErr.classList.add('hidden');
-            }
-
-            // Validate gender
-            const gender    = document.getElementById('member_gender').value;
-            const genderErr = document.getElementById('error-member_gender');
-            if (!gender) {
-                genderErr.textContent = 'Please select a gender.';
-                genderErr.classList.remove('hidden');
-                valid = false;
-            } else {
-                genderErr.classList.add('hidden');
-            }
-
-            if (!valid) return;
-
-            // TODO: Kirim data ke PHP controller di sini
-            alert('Member berhasil ditambahkan! (belum terhubung ke server)');
-            closeAddMemberModal();
-        }
-
-        // Tutup modal jika tekan Escape
-        document.addEventListener('keydown', function (e) {
-            if (e.key === 'Escape') closeAddMemberModal();
-        });
     </script>
 </body>
 </html>
