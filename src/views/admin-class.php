@@ -54,6 +54,10 @@ $member_result = mysqli_query($connection, $member_query);
 
     <!-- Lucide Icons -->
     <script src="https://unpkg.com/lucide@latest"></script>
+
+    <!-- Flatpickr -->
+    <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/flatpickr/dist/flatpickr.min.css">
+    <script src="https://cdn.jsdelivr.net/npm/flatpickr"></script>
 </head>
 <body class="bg-[#F8FAFC] min-h-screen flex">
 
@@ -147,12 +151,11 @@ $member_result = mysqli_query($connection, $member_query);
                                 Admin Only Mode
                             </span>
                         </div>
-
                     </div>
 
                     <!-- Right: Action Buttons -->
                     <div class="flex items-center gap-3 flex-wrap">
-                        <button onclick="alert('Create Session')"
+                        <button onclick="openCreateSessionModal()"
                             class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#93C5FD] text-white rounded-xl text-sm font-medium hover:bg-blue-400 transition-all shadow-sm">
                             <i data-lucide="play-circle" class="w-4 h-4"></i>
                             Create Session
@@ -181,7 +184,7 @@ $member_result = mysqli_query($connection, $member_query);
                         <thead>
                             <tr class="border-b border-gray-100">
                                 <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[5%]">No</th>
-                                <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[20%]">Fullname </th>
+                                <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[20%]">Fullname</th>
                                 <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[10%]">
                                     <span class="inline-flex items-center gap-1 justify-center">
                                         <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-green-400"></i>
@@ -215,17 +218,15 @@ $member_result = mysqli_query($connection, $member_query);
                                 while($member = mysqli_fetch_assoc($member_result)):
                             ?>
                             <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                                <td class="py-4 text-xs text-gray-400"><?= $row++;?></td>
+                                <td class="py-4 text-xs text-gray-400"><?= $row++; ?></td>
                                 <td class="py-4 pl-3">
                                     <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
                                         <div class="w-[22px] h-[22px] rounded-full overflow-hidden flex-shrink-0">
-                                            <img src="../../storage/profile_picture/<?= htmlspecialchars($member['profile_picture']) ?>" 
-                                            alt="<?= htmlspecialchars($member['username']) ?>"
-                                            class="w-full h-full object-cover"
-                                            onerror="this.style.display='none'; this.nextElementSibling.style.display='flex'">
+                                            <img src="../../storage/profile_picture/<?= htmlspecialchars($member['profile_picture']) ?>"
+                                                alt="<?= htmlspecialchars($member['fullname']) ?>"
+                                                class="w-full h-full object-cover">
                                         </div>
-                                        
-                                        <?= htmlspecialchars($member["fullname"]);?>
+                                        <?= htmlspecialchars($member["fullname"]); ?>
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
@@ -255,11 +256,11 @@ $member_result = mysqli_query($connection, $member_query);
                                 <td class="py-4 text-right">
                                     <span class="inline-flex items-center justify-end gap-1.5 text-xs text-gray-400">
                                         <i data-lucide="calendar" class="w-3 h-3"></i>
-                                        <?= date("d-m-Y", strtotime($member["created_at"]))?>
+                                        <?= date("d-m-Y", strtotime($member["created_at"])) ?>
                                     </span>
                                 </td>
                             </tr>
-                            <?php endwhile;?>
+                            <?php endwhile; ?>
                         </tbody>
                     </table>
                 </div>
@@ -268,23 +269,24 @@ $member_result = mysqli_query($connection, $member_query);
         </main>
     </div>
 
+    <!-- ── Modal: Add Member ────────────────────────────────────────────────── -->
     <div id="addMemberModal" class="fixed inset-0 hidden items-center justify-center z-50">
-    
+
         <!-- Overlay -->
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="closeAddMemberModal()"></div>
-    
+
         <!-- Modal Box -->
         <div class="relative bg-white w-[500px] max-h-[90vh] overflow-y-auto rounded-2xl border border-[#DEE1E6] p-6 z-10">
-    
+
             <!-- Header -->
             <div class="flex items-center gap-3 mb-4">
                 <img class="h-[30px]" src="../../public/images/icon.png" alt="Icon">
                 <h1 class="text-xl text-[#87CEEB] font-bold">Add Member</h1>
             </div>
             <p class="text-sm text-[#565D6D] mb-4">Invite a new member to join this class</p>
-    
+
             <form id="formAddMember" action="../controllers/MemberClassController.php" method="POST" enctype="multipart/form-data" class="space-y-4">
-    
+
                 <!-- Fullname -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-1">Full Name</label>
@@ -300,7 +302,7 @@ $member_result = mysqli_query($connection, $member_query);
                     </div>
                     <p id="error-fullname" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
-    
+
                 <!-- Gender -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-2">Gender</label>
@@ -321,11 +323,11 @@ $member_result = mysqli_query($connection, $member_query);
                     <input type="hidden" id="gender" name="gender" value="">
                     <p id="error-gender" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
-    
+
                 <!-- Profile Photo -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-2">Profile Photo</label>
-    
+
                     <!-- Tab Toggle -->
                     <div class="flex gap-2 mb-3">
                         <button type="button" onclick="switchPhotoTab('default')" id="tab-default"
@@ -337,7 +339,7 @@ $member_result = mysqli_query($connection, $member_query);
                             Upload Photo
                         </button>
                     </div>
-    
+
                     <!-- Panel: Default Photos -->
                     <div id="panel-default">
                         <div class="w-full border border-[#DEE1E6] rounded-lg p-3 bg-[#FAFAFA]">
@@ -356,23 +358,23 @@ $member_result = mysqli_query($connection, $member_query);
                         </div>
                         <input type="hidden" name="default_profile_picture" id="default_photo" value="default-profile-1.svg">
                     </div>
-    
+
                     <!-- Panel: Upload -->
                     <div id="panel-upload" class="hidden">
                         <div class="w-full border border-[#DEE1E6] rounded-lg p-4 flex items-center gap-4 bg-[#FAFAFA]">
-    
+
                             <!-- Thumbnail Preview -->
                             <div class="w-14 h-14 rounded-xl bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0">
                                 <i data-lucide="image" class="w-6 h-6 text-gray-300" id="photo-placeholder-icon"></i>
                                 <img id="picture-preview" class="hidden w-full h-full object-cover" src="" alt="Preview">
                             </div>
-    
+
                             <!-- Text + Button -->
                             <div class="flex-1 min-w-0">
                                 <p class="text-xs text-[#565D6D] font-medium mb-0.5" id="picture-filename">No file chosen</p>
                                 <p class="text-[11px] text-gray-400">JPG, PNG, WEBP — max 2MB</p>
                             </div>
-    
+
                             <!-- Trigger Button -->
                             <button type="button" onclick="document.getElementById('profile_picture').click()"
                                 class="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#DEE1E6] rounded-lg text-xs text-[#565D6D] hover:bg-gray-50 transition-all">
@@ -384,7 +386,7 @@ $member_result = mysqli_query($connection, $member_query);
                             onchange="previewPhoto(event)">
                     </div>
                 </div>
-    
+
                 <!-- Buttons -->
                 <div class="flex gap-3 mt-5">
                     <button
@@ -400,6 +402,111 @@ $member_result = mysqli_query($connection, $member_query);
                         Cancel
                     </button>
                 </div>
+                <input type="hidden" name="class_id" value="<?php echo $class_id; ?>">
+            </form>
+        </div>
+    </div>
+
+    <div id="createSessionModal" class="fixed inset-0 hidden items-center justify-center z-50">
+
+        <!-- Overlay -->
+        <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="closeCreateSessionModal()"></div>
+
+        <!-- Modal Box -->
+        <div class="relative bg-white w-[500px] max-h-[90vh] overflow-y-auto rounded-2xl border border-[#DEE1E6] p-6 z-10">
+
+            <!-- Header -->
+            <div class="flex items-center gap-3 mb-4">
+                <img class="h-[30px]" src="../../public/images/icon.png" alt="Icon">
+                <h1 class="text-xl text-[#87CEEB] font-bold">Create Session</h1>
+            </div>
+            <p class="text-sm text-[#565D6D] mb-4">Create a new attendance session for this class</p>
+
+            <form id="formCreateSession" action="../controllers/SessionController.php" method="POST" class="space-y-4">
+
+                <!-- Session Name -->
+                <div>
+                    <label class="text-sm text-[#565D6D] block mb-1">Session Name</label>
+                    <div class="relative">
+                        <input
+                            type="text"
+                            id="session_name"
+                            name="session_name"
+                            placeholder="e.g. Pertemuan 1"
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm"
+                        >
+                        <i data-lucide="bookmark" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <p id="error-session_name" class="hidden text-xs text-red-400 mt-1"></p>
+                </div>
+
+                <!-- Description -->
+                <div>
+                    <label class="text-sm text-[#565D6D] block mb-1">
+                        Description <span class="text-gray-300">(optional)</span>
+                    </label>
+                    <div class="relative">
+                        <textarea
+                            id="session_description"
+                            name="session_description"
+                            placeholder="e.g. Materi hari ini tentang..."
+                            rows="3"
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm resize-none"
+                        ></textarea>
+                        <i data-lucide="file-text" class="w-4 h-4 absolute left-3 top-3 text-gray-400"></i>
+                    </div>
+                </div>
+
+                <!-- Start Time -->
+                <div>
+                    <label class="text-sm text-[#565D6D] block mb-1">Start Time</label>
+                    <div class="relative">
+                        <input
+                            type="text"
+                            id="start_time"
+                            name="start_time"
+                            placeholder="Pilih tanggal & waktu mulai"
+                            readonly
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm cursor-pointer bg-white"
+                        >
+                        <i data-lucide="clock" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <p id="error-start_time" class="hidden text-xs text-red-400 mt-1"></p>
+                </div>
+
+                <!-- End Time -->
+                <div>
+                    <label class="text-sm text-[#565D6D] block mb-1">End Time</label>
+                    <div class="relative">
+                        <input
+                            type="text"
+                            id="end_time"
+                            name="end_time"
+                            placeholder="Pilih tanggal & waktu selesai"
+                            readonly
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm cursor-pointer bg-white"
+                        >
+                        <i data-lucide="clock-4" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
+                    </div>
+                    <p id="error-end_time" class="hidden text-xs text-red-400 mt-1"></p>
+                </div>
+
+                <!-- Buttons -->
+                <div class="flex gap-3 mt-5">
+                    <button
+                        type="button"
+                        onclick="handleCreateSession()"
+                        class="flex-1 py-3 bg-gradient-to-r from-[#7B61FF] via-[#3BC5BA] to-[#5D87E8] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-all">
+                        Create Session
+                    </button>
+                    <button
+                        type="button"
+                        onclick="closeCreateSessionModal()"
+                        class="flex-1 py-3 border border-[#DEE1E6] rounded-xl text-sm text-[#565D6D] hover:bg-gray-50 transition-all">
+                        Cancel
+                    </button>
+                </div>
+
                 <input type="hidden" name="class_id" value="<?php echo $class_id; ?>">
             </form>
         </div>

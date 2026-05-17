@@ -46,6 +46,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
+    // ════════════════════════════════════════════════════════════════════════
+    // ADD MEMBER MODAL
+    // ════════════════════════════════════════════════════════════════════════
+
     // ── Referensi field ──────────────────────────────────────────────────────
 
     const fields = {
@@ -54,36 +58,31 @@ document.addEventListener("DOMContentLoaded", () => {
             error: document.getElementById("error-fullname"),
         },
         gender: {
-            input: document.getElementById("gender"),   // hidden input
+            input: document.getElementById("gender"),
             error: document.getElementById("error-gender"),
         },
     };
 
 
-    // ── Validator per field ──────────────────────────────────────────────────
+    // ── Validator ────────────────────────────────────────────────────────────
 
     function validateFullname() {
         const { input, error } = fields.fullname;
         const value = input.value.trim();
-
         if (value === "") {
             showError(input, error, "Full name is required.");
             return false;
         }
-
         markSuccess(input, error);
         return true;
     }
 
     function validateGender() {
         const { input, error } = fields.gender;
-        const value = input.value;
-
-        if (value === "") {
+        if (input.value === "") {
             showError(null, error, "Please select a gender.");
             return false;
         }
-
         clearError(null, error);
         return true;
     }
@@ -99,7 +98,7 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
 
-    // ── Add Member Modal ─────────────────────────────────────────────────────
+    // ── Modal open / close ───────────────────────────────────────────────────
 
     window.openAddMemberModal = function () {
         const modal = document.getElementById("addMemberModal");
@@ -111,26 +110,20 @@ document.addEventListener("DOMContentLoaded", () => {
         const modal = document.getElementById("addMemberModal");
         modal.classList.add("hidden");
         modal.classList.remove("flex");
-        resetModal();
+        resetAddMemberModal();
     };
 
-    function resetModal() {
-        // Reset field values
+    function resetAddMemberModal() {
         if (fields.fullname.input) fields.fullname.input.value = "";
         if (fields.gender.input)   fields.gender.input.value   = "";
 
-        // Reset error states
-        Object.values(fields).forEach(({ input, error }) => {
-            clearError(input, error);
-        });
+        Object.values(fields).forEach(({ input, error }) => clearError(input, error));
 
-        // Reset gender UI
         const maleLabel   = document.getElementById("gender-male-label");
         const femaleLabel = document.getElementById("gender-female-label");
-        if (maleLabel)   { maleLabel.classList.remove("border-[#93C5FD]", "bg-blue-50");  maleLabel.classList.add("border-[#DEE1E6]"); }
+        if (maleLabel)   { maleLabel.classList.remove("border-[#93C5FD]", "bg-blue-50");   maleLabel.classList.add("border-[#DEE1E6]"); }
         if (femaleLabel) { femaleLabel.classList.remove("border-[#93C5FD]", "bg-pink-50"); femaleLabel.classList.add("border-[#DEE1E6]"); }
 
-        // Reset photo tab ke default
         switchPhotoTab("default");
         const defaultPhoto = document.getElementById("default_photo");
         if (defaultPhoto) defaultPhoto.value = "default-profile-1.svg";
@@ -163,7 +156,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const maleLabel   = document.getElementById("gender-male-label");
         const femaleLabel = document.getElementById("gender-female-label");
 
-        // Reset keduanya
         maleLabel.classList.remove("border-[#93C5FD]", "bg-blue-50");
         femaleLabel.classList.remove("border-[#93C5FD]", "bg-pink-50");
         maleLabel.classList.add("border-[#DEE1E6]");
@@ -177,7 +169,6 @@ document.addEventListener("DOMContentLoaded", () => {
             femaleLabel.classList.add("border-[#93C5FD]", "bg-pink-50");
         }
 
-        // Hapus error gender setelah dipilih
         clearError(null, fields.gender.error);
     };
 
@@ -264,37 +255,192 @@ document.addEventListener("DOMContentLoaded", () => {
     };
 
 
-    // ── Handle Submit (Add Member) ───────────────────────────────────────────
+    // ── Handle Submit Add Member ─────────────────────────────────────────────
 
     window.handleAddMember = function () {
-        const results = [
-            validateFullname(),
-            validateGender(),
-        ];
-
-        const isFormValid = results.every(Boolean);
-
-        if (!isFormValid) {
-            // Scroll ke field error pertama
-            const firstInvalidInput = Object.values(fields)
+        const results = [validateFullname(), validateGender()];
+        if (!results.every(Boolean)) {
+            const firstInvalid = Object.values(fields)
                 .map(f => f.input)
                 .find(input => input && input.classList.contains("border-red-400"));
-
-            if (firstInvalidInput) {
-                firstInvalidInput.scrollIntoView({ behavior: "smooth", block: "center" });
-                firstInvalidInput.focus();
+            if (firstInvalid) {
+                firstInvalid.scrollIntoView({ behavior: "smooth", block: "center" });
+                firstInvalid.focus();
             }
             return;
         }
-
         document.getElementById("formAddMember").submit();
     };
 
 
-    // ── Tutup Modal dengan Escape ────────────────────────────────────────────
+    // ════════════════════════════════════════════════════════════════════════
+    // CREATE SESSION MODAL
+    // ════════════════════════════════════════════════════════════════════════
+
+    let startPicker = null;
+    let endPicker   = null;
+
+    // Helper: hitung minDate dengan toleransi 1 jam ke belakang
+    function getMinDate() {
+        const d = new Date();
+        d.setMinutes(d.getMinutes() - 60);
+        return d;
+    }
+
+    window.openCreateSessionModal = function () {
+        const modal = document.getElementById("createSessionModal");
+        modal.classList.remove("hidden");
+        modal.classList.add("flex");
+
+        const minDate = getMinDate();
+
+        // Hancurkan instance lama jika ada
+        if (startPicker) startPicker.destroy();
+        if (endPicker)   endPicker.destroy();
+
+        startPicker = flatpickr("#start_time", {
+            enableTime:  true,
+            dateFormat:  "Y-m-d H:i",
+            minDate:     minDate,
+            time_24hr:   true,
+            minuteIncrement: 5,
+            onChange: function (selectedDates) {
+                if (selectedDates.length > 0) {
+                    // end time min = start time yang dipilih
+                    endPicker.set("minDate", selectedDates[0]);
+                    // Validasi ulang end time jika sudah diisi
+                    if (document.getElementById("end_time").value) validateEndTime();
+                    // Hapus error start time
+                    const err = document.getElementById("error-start_time");
+                    const inp = document.getElementById("start_time");
+                    markSuccess(inp, err);
+                }
+            },
+        });
+
+        endPicker = flatpickr("#end_time", {
+            enableTime:  true,
+            dateFormat:  "Y-m-d H:i",
+            minDate:     minDate,
+            time_24hr:   true,
+            minuteIncrement: 5,
+            onChange: function () {
+                if (document.getElementById("end_time").value) validateEndTime();
+            },
+        });
+    };
+
+    window.closeCreateSessionModal = function () {
+        const modal = document.getElementById("createSessionModal");
+        modal.classList.add("hidden");
+        modal.classList.remove("flex");
+        resetCreateSessionModal();
+    };
+
+    function resetCreateSessionModal() {
+        document.getElementById("session_name").value        = "";
+        document.getElementById("session_description").value = "";
+
+        if (startPicker) startPicker.clear();
+        if (endPicker)   endPicker.clear();
+
+        ["session_name", "start_time", "end_time"].forEach(id => {
+            const err = document.getElementById("error-" + id);
+            const inp = document.getElementById(id);
+            if (err) clearError(inp, err);
+        });
+    }
+
+
+    // ── Validator session ────────────────────────────────────────────────────
+
+    function validateSessionName() {
+        const input = document.getElementById("session_name");
+        const error = document.getElementById("error-session_name");
+        if (input.value.trim() === "") {
+            showError(input, error, "Session name is required.");
+            return false;
+        }
+        markSuccess(input, error);
+        return true;
+    }
+
+    function validateStartTime() {
+        const input   = document.getElementById("start_time");
+        const error   = document.getElementById("error-start_time");
+        const val     = input.value;
+
+        if (!val) {
+            showError(input, error, "Start time is required.");
+            return false;
+        }
+
+        const selected = new Date(val.replace(" ", "T"));
+        const minTime  = getMinDate();
+
+        if (selected < minTime) {
+            showError(input, error, "Start time is too far in the past (max 1 hour back).");
+            return false;
+        }
+
+        markSuccess(input, error);
+        return true;
+    }
+
+    function validateEndTime() {
+        const input    = document.getElementById("end_time");
+        const error    = document.getElementById("error-end_time");
+        const startVal = document.getElementById("start_time").value;
+        const val      = input.value;
+
+        if (!val) {
+            showError(input, error, "End time is required.");
+            return false;
+        }
+
+        if (startVal && new Date(val.replace(" ", "T")) <= new Date(startVal.replace(" ", "T"))) {
+            showError(input, error, "End time must be after start time.");
+            return false;
+        }
+
+        markSuccess(input, error);
+        return true;
+    }
+
+
+    // ── Listener validasi live session ───────────────────────────────────────
+
+    document.getElementById("session_name")?.addEventListener("blur", validateSessionName);
+    document.getElementById("session_name")?.addEventListener("input", () => {
+        const err = document.getElementById("error-session_name");
+        if (err && !err.classList.contains("hidden")) validateSessionName();
+    });
+
+
+    // ── Handle Submit Create Session ─────────────────────────────────────────
+
+    window.handleCreateSession = function () {
+        const results = [
+            validateSessionName(),
+            validateStartTime(),
+            validateEndTime(),
+        ];
+
+        if (!results.every(Boolean)) return;
+
+        document.getElementById("formCreateSession").submit();
+    };
+
+
+    // ════════════════════════════════════════════════════════════════════════
+    // TUTUP MODAL DENGAN ESCAPE
+    // ════════════════════════════════════════════════════════════════════════
 
     document.addEventListener("keydown", (e) => {
-        if (e.key === "Escape") window.closeAddMemberModal();
+        if (e.key === "Escape") {
+            window.closeAddMemberModal();
+            window.closeCreateSessionModal();
+        }
     });
 
 });
