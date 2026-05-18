@@ -175,16 +175,20 @@ $member_result = mysqli_query($connection, $member_query);
                 </div>
             </div>
 
-            <!-- Member Table Card -->
             <div class="bg-white rounded-[2rem] p-8 shadow-sm">
                 <h2 class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-6">All Your Member Class</h2>
 
                 <div class="overflow-x-auto">
-                    <table class="w-full text-sm border-collapse min-w-[700px]">
+                    <!-- Lebar minimum dinaikkan sedikit agar kolom gender muat dengan lega -->
+                    <table class="w-full text-sm border-collapse min-w-[750px]">
                         <thead>
                             <tr class="border-b border-gray-100">
                                 <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[5%]">No</th>
                                 <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[20%]">Fullname</th>
+                                
+                                <!-- KEPALA KOLOM BARU: GENDER -->
+                                <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[8%]">Gender</th>
+                                
                                 <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[10%]">
                                     <span class="inline-flex items-center gap-1 justify-center">
                                         <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-green-400"></i>
@@ -229,6 +233,24 @@ $member_result = mysqli_query($connection, $member_query);
                                         <?= htmlspecialchars($member["fullname"]); ?>
                                     </span>
                                 </td>
+
+                                <td class="py-4 text-center">
+                                    <?php if ($member['gender'] == 1 || strtolower($member['gender']) == 'male'): ?>
+                                        <!-- Ikon Male (Mars) dengan Tooltip -->
+                                        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50" title="Male">
+                                            <i data-lucide="mars" class="w-4 h-4 text-blue-400"></i>
+                                        </span>
+                                    <?php elseif ($member['gender'] == 2 || strtolower($member['gender']) == 'female'): ?>
+                                        <!-- Ikon Female (Venus) dengan Tooltip -->
+                                        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-pink-50" title="Female">
+                                            <i data-lucide="venus" class="w-4 h-4 text-pink-400"></i>
+                                        </span>
+                                    <?php else: ?>
+                                        <!-- Antisipasi jika data kosong/belum diisi -->
+                                        <span class="text-gray-300 text-xs">-</span>
+                                    <?php endif; ?>
+                                </td>
+
                                 <td class="py-4 text-center">
                                     <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-green-50 text-green-600">
                                         <i data-lucide="check-circle-2" class="w-3 h-3"></i>
