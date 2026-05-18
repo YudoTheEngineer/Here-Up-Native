@@ -254,10 +254,17 @@ $member_result = mysqli_query($connection, $member_query);
                                     </span>
                                 </td>
                                 <td class="py-4 text-right">
-                                    <span class="inline-flex items-center justify-end gap-1.5 text-xs text-gray-400">
-                                        <i data-lucide="calendar" class="w-3 h-3"></i>
-                                        <?= date("d-m-Y", strtotime($member["created_at"])) ?>
-                                    </span>
+                                    <div class="flex flex-col items-end line-height-1.2">
+                                        <!-- Baris Atas: Tanggal -->
+                                        <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-700">
+                                            <i data-lucide="calendar" class="w-3 h-3 text-gray-400"></i>
+                                            <?= date("d F Y", strtotime($member["created_at"])) ?>
+                                        </span>
+                                        <!-- Baris Bawah: Jam & Zona Waktu -->
+                                        <span class="text-[11px] text-gray-400 mt-0.5 font-mono">
+                                            <?= date("H:i", strtotime($member["created_at"])) ?> UTC
+                                        </span>
+                                    </div>
                                 </td>
                             </tr>
                             <?php endwhile; ?>
