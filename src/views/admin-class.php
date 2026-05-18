@@ -431,8 +431,8 @@ $member_result = mysqli_query($connection, $member_query);
                         <input
                             type="text"
                             id="session_name"
-                            name="session_name"
-                            placeholder="e.g. Pertemuan 1"
+                            name="name"
+                            placeholder="e.g. attendance 1"
                             class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm"
                         >
                         <i data-lucide="bookmark" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
@@ -448,8 +448,8 @@ $member_result = mysqli_query($connection, $member_query);
                     <div class="relative">
                         <textarea
                             id="session_description"
-                            name="session_description"
-                            placeholder="e.g. Materi hari ini tentang..."
+                            name="description"
+                            placeholder="e.g. today's activity is about..."
                             rows="3"
                             class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm resize-none"
                         ></textarea>
@@ -465,7 +465,7 @@ $member_result = mysqli_query($connection, $member_query);
                             type="text"
                             id="start_time"
                             name="start_time"
-                            placeholder="Pilih tanggal & waktu mulai"
+                            placeholder="select start date and time"
                             readonly
                             class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm cursor-pointer bg-white"
                         >
@@ -482,13 +482,196 @@ $member_result = mysqli_query($connection, $member_query);
                             type="text"
                             id="end_time"
                             name="end_time"
-                            placeholder="Pilih tanggal & waktu selesai"
+                            placeholder="select end date and time"
                             readonly
                             class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm cursor-pointer bg-white"
                         >
                         <i data-lucide="clock-4" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
                     <p id="error-end_time" class="hidden text-xs text-red-400 mt-1"></p>
+                </div>
+
+                <!-- Timezone -->
+                <div>
+                    <label class="text-sm text-[#565D6D] block mb-1">Timezone</label>
+                    <div class="relative">
+                        <select
+                            id="timezone"
+                            name="timezone"
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm bg-white appearance-none"
+                        >
+                            <option value="" disabled>Select timezone</option>
+
+                            <!-- UTC 0 -->
+                            <option value="UTC" selected>UTC+0 — UTC</option>
+                            <option value="Europe/London">UTC+0 — London</option>
+                            <option value="Africa/Accra">UTC+0 — Accra</option>
+
+                            <!-- UTC+1 -->
+                            <option value="Europe/Paris">UTC+1 — Paris</option>
+                            <option value="Europe/Berlin">UTC+1 — Berlin</option>
+                            <option value="Europe/Rome">UTC+1 — Rome</option>
+                            <option value="Africa/Lagos">UTC+1 — Lagos</option>
+
+                            <!-- UTC+2 -->
+                            <option value="Europe/Athens">UTC+2 — Athens</option>
+                            <option value="Europe/Helsinki">UTC+2 — Helsinki</option>
+                            <option value="Africa/Cairo">UTC+2 — Cairo</option>
+                            <option value="Africa/Johannesburg">UTC+2 — Johannesburg</option>
+
+                            <!-- UTC+3 -->
+                            <option value="Europe/Moscow">UTC+3 — Moscow</option>
+                            <option value="Asia/Riyadh">UTC+3 — Riyadh</option>
+                            <option value="Africa/Nairobi">UTC+3 — Nairobi</option>
+                            <option value="Asia/Baghdad">UTC+3 — Baghdad</option>
+
+                            <!-- UTC+3:30 -->
+                            <option value="Asia/Tehran">UTC+3:30 — Tehran</option>
+
+                            <!-- UTC+4 -->
+                            <option value="Asia/Dubai">UTC+4 — Dubai</option>
+                            <option value="Asia/Baku">UTC+4 — Baku</option>
+                            <option value="Indian/Mauritius">UTC+4 — Mauritius</option>
+
+                            <!-- UTC+4:30 -->
+                            <option value="Asia/Kabul">UTC+4:30 — Kabul</option>
+
+                            <!-- UTC+5 -->
+                            <option value="Asia/Karachi">UTC+5 — Karachi</option>
+                            <option value="Asia/Tashkent">UTC+5 — Tashkent</option>
+
+                            <!-- UTC+5:30 -->
+                            <option value="Asia/Kolkata">UTC+5:30 — Kolkata / Mumbai</option>
+                            <option value="Asia/Colombo">UTC+5:30 — Colombo</option>
+
+                            <!-- UTC+5:45 -->
+                            <option value="Asia/Kathmandu">UTC+5:45 — Kathmandu</option>
+
+                            <!-- UTC+6 -->
+                            <option value="Asia/Dhaka">UTC+6 — Dhaka</option>
+                            <option value="Asia/Almaty">UTC+6 — Almaty</option>
+
+                            <!-- UTC+6:30 -->
+                            <option value="Asia/Yangon">UTC+6:30 — Yangon</option>
+                            <option value="Indian/Cocos">UTC+6:30 — Cocos Islands</option>
+
+                            <!-- UTC+7 -->
+                            <option value="Asia/Jakarta">UTC+7 — Jakarta (WIB)</option>
+                            <option value="Asia/Bangkok">UTC+7 — Bangkok</option>
+                            <option value="Asia/Ho_Chi_Minh">UTC+7 — Ho Chi Minh</option>
+                            <option value="Asia/Phnom_Penh">UTC+7 — Phnom Penh</option>
+
+                            <!-- UTC+8 -->
+                            <option value="Asia/Makassar">UTC+8 — Makassar (WITA)</option>
+                            <option value="Asia/Singapore">UTC+8 — Singapore</option>
+                            <option value="Asia/Kuala_Lumpur">UTC+8 — Kuala Lumpur</option>
+                            <option value="Asia/Shanghai">UTC+8 — Shanghai</option>
+                            <option value="Asia/Hong_Kong">UTC+8 — Hong Kong</option>
+                            <option value="Asia/Taipei">UTC+8 — Taipei</option>
+                            <option value="Asia/Manila">UTC+8 — Manila</option>
+                            <option value="Australia/Perth">UTC+8 — Perth</option>
+
+                            <!-- UTC+8:45 -->
+                            <option value="Australia/Eucla">UTC+8:45 — Eucla</option>
+
+                            <!-- UTC+9 -->
+                            <option value="Asia/Jayapura">UTC+9 — Jayapura (WIT)</option>
+                            <option value="Asia/Tokyo">UTC+9 — Tokyo</option>
+                            <option value="Asia/Seoul">UTC+9 — Seoul</option>
+                            <option value="Pacific/Palau">UTC+9 — Palau</option>
+
+                            <!-- UTC+9:30 -->
+                            <option value="Australia/Darwin">UTC+9:30 — Darwin</option>
+                            <option value="Australia/Adelaide">UTC+9:30 — Adelaide</option>
+
+                            <!-- UTC+10 -->
+                            <option value="Australia/Sydney">UTC+10 — Sydney</option>
+                            <option value="Australia/Brisbane">UTC+10 — Brisbane</option>
+                            <option value="Pacific/Port_Moresby">UTC+10 — Port Moresby</option>
+                            <option value="Pacific/Guam">UTC+10 — Guam</option>
+
+                            <!-- UTC+10:30 -->
+                            <option value="Australia/Lord_Howe">UTC+10:30 — Lord Howe Island</option>
+
+                            <!-- UTC+11 -->
+                            <option value="Pacific/Noumea">UTC+11 — Noumea</option>
+                            <option value="Pacific/Guadalcanal">UTC+11 — Guadalcanal</option>
+
+                            <!-- UTC+12 -->
+                            <option value="Pacific/Auckland">UTC+12 — Auckland</option>
+                            <option value="Pacific/Fiji">UTC+12 — Fiji</option>
+                            <option value="Pacific/Majuro">UTC+12 — Marshall Islands</option>
+
+                            <!-- UTC+12:45 -->
+                            <option value="Pacific/Chatham">UTC+12:45 — Chatham Islands</option>
+
+                            <!-- UTC+13 -->
+                            <option value="Pacific/Tongatapu">UTC+13 — Tonga</option>
+                            <option value="Pacific/Apia">UTC+13 — Samoa</option>
+
+                            <!-- UTC+14 -->
+                            <option value="Pacific/Kiritimati">UTC+14 — Kiritimati</option>
+
+                            <!-- UTC-1 -->
+                            <option value="Atlantic/Azores">UTC-1 — Azores</option>
+                            <option value="Atlantic/Cape_Verde">UTC-1 — Cape Verde</option>
+
+                            <!-- UTC-2 -->
+                            <option value="America/Noronha">UTC-2 — Fernando de Noronha</option>
+                            <option value="Atlantic/South_Georgia">UTC-2 — South Georgia</option>
+
+                            <!-- UTC-3 -->
+                            <option value="America/Sao_Paulo">UTC-3 — São Paulo</option>
+                            <option value="America/Buenos_Aires">UTC-3 — Buenos Aires</option>
+                            <option value="America/Santiago">UTC-3 — Santiago</option>
+
+                            <!-- UTC-3:30 -->
+                            <option value="America/St_Johns">UTC-3:30 — St. John's (NST)</option>
+
+                            <!-- UTC-4 -->
+                            <option value="America/Halifax">UTC-4 — Halifax (AST)</option>
+                            <option value="America/La_Paz">UTC-4 — La Paz</option>
+                            <option value="America/Caracas">UTC-4 — Caracas</option>
+                            <option value="America/Manaus">UTC-4 — Manaus</option>
+
+                            <!-- UTC-5 -->
+                            <option value="America/New_York">UTC-5 — New York (EST)</option>
+                            <option value="America/Toronto">UTC-5 — Toronto</option>
+                            <option value="America/Bogota">UTC-5 — Bogotá</option>
+                            <option value="America/Lima">UTC-5 — Lima</option>
+
+                            <!-- UTC-6 -->
+                            <option value="America/Chicago">UTC-6 — Chicago (CST)</option>
+                            <option value="America/Mexico_City">UTC-6 — Mexico City</option>
+
+                            <!-- UTC-7 -->
+                            <option value="America/Denver">UTC-7 — Denver (MST)</option>
+                            <option value="America/Phoenix">UTC-7 — Phoenix</option>
+
+                            <!-- UTC-8 -->
+                            <option value="America/Los_Angeles">UTC-8 — Los Angeles (PST)</option>
+                            <option value="America/Vancouver">UTC-8 — Vancouver</option>
+                            <option value="America/Anchorage">UTC-8 — Anchorage</option>
+
+                            <!-- UTC-9 -->
+                            <option value="America/Anchorage">UTC-9 — Alaska</option>
+                            <option value="Pacific/Gambier">UTC-9 — Gambier Islands</option>
+
+                            <!-- UTC-10 -->
+                            <option value="Pacific/Honolulu">UTC-10 — Honolulu (HST)</option>
+                            <option value="Pacific/Tahiti">UTC-10 — Tahiti</option>
+
+                            <!-- UTC-11 -->
+                            <option value="Pacific/Niue">UTC-11 — Niue</option>
+                            <option value="Pacific/Pago_Pago">UTC-11 — Pago Pago</option>
+
+                            <!-- UTC-12 -->
+                            <option value="Etc/GMT+12">UTC-12 — Baker Island</option>
+                        </select>
+                        <i data-lucide="globe" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                        <i data-lucide="chevron-down" class="w-4 h-4 absolute right-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
+                    </div>
+                    <p id="error-timezone" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
 
                 <!-- Buttons -->
@@ -508,6 +691,7 @@ $member_result = mysqli_query($connection, $member_query);
                 </div>
 
                 <input type="hidden" name="class_id" value="<?php echo $class_id; ?>">
+                <input type="hidden" name="user_id" value="<?php echo $user_id; ?>">
             </form>
         </div>
     </div>

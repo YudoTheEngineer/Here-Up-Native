@@ -19,8 +19,10 @@ document.addEventListener("DOMContentLoaded", () => {
     // ── UI helpers ───────────────────────────────────────────────────────────
 
     function showError(input, errorEl, message) {
-        errorEl.textContent = message;
-        errorEl.classList.remove("hidden");
+        if (errorEl) {
+            errorEl.textContent = message;
+            errorEl.classList.remove("hidden");
+        }
         if (input) {
             input.classList.remove(...ALL_STATE_CLASSES);
             input.classList.add(...CLS.error);
@@ -28,8 +30,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function clearError(input, errorEl) {
-        errorEl.textContent = "";
-        errorEl.classList.add("hidden");
+        if (errorEl) {
+            errorEl.textContent = "";
+            errorEl.classList.add("hidden");
+        }
         if (input) {
             input.classList.remove(...ALL_STATE_CLASSES);
             input.classList.add(...CLS.base, ...CLS.focusDef);
@@ -37,8 +41,10 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     function markSuccess(input, errorEl) {
-        errorEl.textContent = "";
-        errorEl.classList.add("hidden");
+        if (errorEl) {
+            errorEl.textContent = "";
+            errorEl.classList.add("hidden");
+        }
         if (input) {
             input.classList.remove(...ALL_STATE_CLASSES);
             input.classList.add(...CLS.success);
@@ -49,8 +55,6 @@ document.addEventListener("DOMContentLoaded", () => {
     // ════════════════════════════════════════════════════════════════════════
     // ADD MEMBER MODAL
     // ════════════════════════════════════════════════════════════════════════
-
-    // ── Referensi field ──────────────────────────────────────────────────────
 
     const fields = {
         fullname: {
@@ -63,11 +67,9 @@ document.addEventListener("DOMContentLoaded", () => {
         },
     };
 
-
-    // ── Validator ────────────────────────────────────────────────────────────
-
     function validateFullname() {
         const { input, error } = fields.fullname;
+        if (!input) return false;
         const value = input.value.trim();
         if (value === "") {
             showError(input, error, "Full name is required.");
@@ -79,16 +81,13 @@ document.addEventListener("DOMContentLoaded", () => {
 
     function validateGender() {
         const { input, error } = fields.gender;
-        if (input.value === "") {
+        if (!input || input.value === "") {
             showError(null, error, "Please select a gender.");
             return false;
         }
         clearError(null, error);
         return true;
     }
-
-
-    // ── Listener validasi live ───────────────────────────────────────────────
 
     if (fields.fullname.input) {
         fields.fullname.input.addEventListener("blur", validateFullname);
@@ -97,19 +96,14 @@ document.addEventListener("DOMContentLoaded", () => {
         });
     }
 
-
-    // ── Modal open / close ───────────────────────────────────────────────────
-
     window.openAddMemberModal = function () {
         const modal = document.getElementById("addMemberModal");
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
+        if (modal) { modal.classList.remove("hidden"); modal.classList.add("flex"); }
     };
 
     window.closeAddMemberModal = function () {
         const modal = document.getElementById("addMemberModal");
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
+        if (modal) { modal.classList.add("hidden"); modal.classList.remove("flex"); }
         resetAddMemberModal();
     };
 
@@ -146,9 +140,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (filename) filename.textContent = "No file chosen";
     }
 
-
-    // ── Gender Selection ─────────────────────────────────────────────────────
-
     window.selectGender = function (val) {
         const genderInput = document.getElementById("gender");
         if (genderInput) genderInput.value = val;
@@ -156,28 +147,25 @@ document.addEventListener("DOMContentLoaded", () => {
         const maleLabel   = document.getElementById("gender-male-label");
         const femaleLabel = document.getElementById("gender-female-label");
 
-        maleLabel.classList.remove("border-[#93C5FD]", "bg-blue-50");
-        femaleLabel.classList.remove("border-[#93C5FD]", "bg-pink-50");
-        maleLabel.classList.add("border-[#DEE1E6]");
-        femaleLabel.classList.add("border-[#DEE1E6]");
+        if (maleLabel && femaleLabel) {
+            maleLabel.classList.remove("border-[#93C5FD]", "bg-blue-50");
+            femaleLabel.classList.remove("border-[#93C5FD]", "bg-pink-50");
+            maleLabel.classList.add("border-[#DEE1E6]");
+            femaleLabel.classList.add("border-[#DEE1E6]");
 
-        if (val == 1) {
-            maleLabel.classList.remove("border-[#DEE1E6]");
-            maleLabel.classList.add("border-[#93C5FD]", "bg-blue-50");
-        } else {
-            femaleLabel.classList.remove("border-[#DEE1E6]");
-            femaleLabel.classList.add("border-[#93C5FD]", "bg-pink-50");
+            if (val == 1) {
+                maleLabel.classList.remove("border-[#DEE1E6]");
+                maleLabel.classList.add("border-[#93C5FD]", "bg-blue-50");
+            } else {
+                femaleLabel.classList.remove("border-[#DEE1E6]");
+                femaleLabel.classList.add("border-[#93C5FD]", "bg-pink-50");
+            }
         }
-
         clearError(null, fields.gender.error);
     };
 
-
-    // ── Photo Tab ────────────────────────────────────────────────────────────
-
     window.switchPhotoTab = function (tab) {
         const isDefault = tab === "default";
-
         const panelDefault = document.getElementById("panel-default");
         const panelUpload  = document.getElementById("panel-upload");
         const tabDefault   = document.getElementById("tab-default");
@@ -195,19 +183,15 @@ document.addEventListener("DOMContentLoaded", () => {
         if (isDefault) {
             const fileInput = document.getElementById("profile_picture");
             if (fileInput) fileInput.value = "";
-
             const preview = document.getElementById("picture-preview");
             if (preview) { preview.classList.add("hidden"); preview.src = ""; }
-
             const icon = document.getElementById("photo-placeholder-icon");
             if (icon) icon.classList.remove("hidden");
-
             const filename = document.getElementById("picture-filename");
             if (filename) filename.textContent = "No file chosen";
         } else {
             const defaultPhoto = document.getElementById("default_photo");
             if (defaultPhoto) defaultPhoto.value = "";
-
             document.querySelectorAll("#default-photo-grid > div").forEach(el => {
                 el.classList.remove("border-[#93C5FD]");
                 el.classList.add("border-transparent");
@@ -215,32 +199,23 @@ document.addEventListener("DOMContentLoaded", () => {
         }
     };
 
-
-    // ── Default Photo Selection ──────────────────────────────────────────────
-
     window.selectDefaultPhoto = function (num) {
         document.querySelectorAll("#default-photo-grid > div").forEach(el => {
             el.classList.remove("border-[#93C5FD]");
             el.classList.add("border-transparent");
         });
-
         const selected = document.getElementById("default-opt-" + num);
         if (selected) {
             selected.classList.remove("border-transparent");
             selected.classList.add("border-[#93C5FD]");
         }
-
         const defaultPhoto = document.getElementById("default_photo");
         if (defaultPhoto) defaultPhoto.value = "default-profile-" + num + ".svg";
     };
 
-
-    // ── Photo Preview ────────────────────────────────────────────────────────
-
     window.previewPhoto = function (event) {
         const file = event.target.files[0];
         if (!file) return;
-
         const filename = document.getElementById("picture-filename");
         if (filename) filename.textContent = file.name;
 
@@ -253,9 +228,6 @@ document.addEventListener("DOMContentLoaded", () => {
         };
         reader.readAsDataURL(file);
     };
-
-
-    // ── Handle Submit Add Member ─────────────────────────────────────────────
 
     window.handleAddMember = function () {
         const results = [validateFullname(), validateGender()];
@@ -280,7 +252,6 @@ document.addEventListener("DOMContentLoaded", () => {
     let startPicker = null;
     let endPicker   = null;
 
-    // Helper: hitung minDate dengan toleransi 1 jam ke belakang
     function getMinDate() {
         const d = new Date();
         d.setMinutes(d.getMinutes() - 60);
@@ -289,12 +260,10 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.openCreateSessionModal = function () {
         const modal = document.getElementById("createSessionModal");
-        modal.classList.remove("hidden");
-        modal.classList.add("flex");
+        if (modal) { modal.classList.remove("hidden"); modal.classList.add("flex"); }
 
         const minDate = getMinDate();
 
-        // Hancurkan instance lama jika ada
         if (startPicker) startPicker.destroy();
         if (endPicker)   endPicker.destroy();
 
@@ -306,14 +275,9 @@ document.addEventListener("DOMContentLoaded", () => {
             minuteIncrement: 5,
             onChange: function (selectedDates) {
                 if (selectedDates.length > 0) {
-                    // end time min = start time yang dipilih
                     endPicker.set("minDate", selectedDates[0]);
-                    // Validasi ulang end time jika sudah diisi
                     if (document.getElementById("end_time").value) validateEndTime();
-                    // Hapus error start time
-                    const err = document.getElementById("error-start_time");
-                    const inp = document.getElementById("start_time");
-                    markSuccess(inp, err);
+                    markSuccess(document.getElementById("start_time"), document.getElementById("error-start_time"));
                 }
             },
         });
@@ -332,19 +296,23 @@ document.addEventListener("DOMContentLoaded", () => {
 
     window.closeCreateSessionModal = function () {
         const modal = document.getElementById("createSessionModal");
-        modal.classList.add("hidden");
-        modal.classList.remove("flex");
+        if (modal) { modal.classList.add("hidden"); modal.classList.remove("flex"); }
         resetCreateSessionModal();
     };
 
     function resetCreateSessionModal() {
-        document.getElementById("session_name").value        = "";
-        document.getElementById("session_description").value = "";
+        const sessionName = document.getElementById("session_name");
+        const sessionDesc = document.getElementById("session_description");
+        const timezone    = document.getElementById("timezone");
+
+        if (sessionName) sessionName.value = "";
+        if (sessionDesc) sessionDesc.value = "";
+        if (timezone)    timezone.value = ""; 
 
         if (startPicker) startPicker.clear();
         if (endPicker)   endPicker.clear();
 
-        ["session_name", "start_time", "end_time"].forEach(id => {
+        ["session_name", "start_time", "end_time", "timezone"].forEach(id => {
             const err = document.getElementById("error-" + id);
             const inp = document.getElementById(id);
             if (err) clearError(inp, err);
@@ -357,6 +325,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function validateSessionName() {
         const input = document.getElementById("session_name");
         const error = document.getElementById("error-session_name");
+        if (!input) return false;
         if (input.value.trim() === "") {
             showError(input, error, "Session name is required.");
             return false;
@@ -368,6 +337,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function validateStartTime() {
         const input   = document.getElementById("start_time");
         const error   = document.getElementById("error-start_time");
+        if (!input) return false;
         const val     = input.value;
 
         if (!val) {
@@ -390,6 +360,7 @@ document.addEventListener("DOMContentLoaded", () => {
     function validateEndTime() {
         const input    = document.getElementById("end_time");
         const error    = document.getElementById("error-end_time");
+        if (!input) return false;
         const startVal = document.getElementById("start_time").value;
         const val      = input.value;
 
@@ -407,6 +378,21 @@ document.addEventListener("DOMContentLoaded", () => {
         return true;
     }
 
+    function validateTimezone() {
+        const input = document.getElementById("timezone");
+        const error = document.getElementById("error-timezone");
+        if (!input) return false;
+
+        // Mendeteksi value kosong atau indeks opsi default "Select timezone"
+        if (input.value === "" || input.selectedIndex === 0) {
+            showError(input, error, "Please select a timezone.");
+            return false;
+        }
+        
+        markSuccess(input, error);
+        return true;
+    }
+
 
     // ── Listener validasi live session ───────────────────────────────────────
 
@@ -416,25 +402,45 @@ document.addEventListener("DOMContentLoaded", () => {
         if (err && !err.classList.contains("hidden")) validateSessionName();
     });
 
+    // Cukup satu listener terpadu untuk live validation change select timezone
+    document.getElementById("timezone")?.addEventListener("change", () => {
+        const err = document.getElementById("error-timezone");
+        if (err && !err.classList.contains("hidden")) validateTimezone();
+    });
+
 
     // ── Handle Submit Create Session ─────────────────────────────────────────
 
     window.handleCreateSession = function () {
-        const results = [
-            validateSessionName(),
-            validateStartTime(),
-            validateEndTime(),
-        ];
+        // Eksekusi paksa seluruh fungsi secara independen (Tanpa short-circuit)
+        const isNameValid     = validateSessionName();
+        const isStartValid    = validateStartTime();
+        const isEndValid      = validateEndTime();
+        const isTimezoneValid = validateTimezone();
 
-        if (!results.every(Boolean)) return;
+        // Jika salah satu dari 4 variabel bernilai false, cegah pengiriman form
+        if (!isNameValid || !isStartValid || !isEndValid || !isTimezoneValid) {
+            
+            // Loop manual mencari id elemen pertama yang memicu border-red-400
+            const invalidId = ["session_name", "start_time", "end_time", "timezone"].find(id => {
+                const el = document.getElementById(id);
+                return el && el.classList.contains("border-red-400");
+            });
 
+            if (invalidId) {
+                const targetElement = document.getElementById(invalidId);
+                targetElement.scrollIntoView({ behavior: "smooth", block: "center" });
+                targetElement.focus();
+            }
+            return; 
+        }
+
+        // Lolos semua sensor, submit form
         document.getElementById("formCreateSession").submit();
     };
 
 
-    // ════════════════════════════════════════════════════════════════════════
-    // TUTUP MODAL DENGAN ESCAPE
-    // ════════════════════════════════════════════════════════════════════════
+    // ── Tutup Modal dengan Escape ────────────────────────────────────────────
 
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
