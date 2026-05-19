@@ -136,6 +136,13 @@ $session_result = mysqli_query($connection, $session_query);
         <!-- Main Content -->
         <main class="p-10 space-y-6">
 
+            <!-- Breadcrumb -->
+            <div class="flex items-center gap-2 text-xs text-gray-400">
+                <a href="class.php" class="hover:text-gray-600 transition-colors">Class</a>
+                <i data-lucide="chevron-right" class="w-3 h-3"></i>
+                <span class="text-gray-600 font-medium">Admin Class</span>
+            </div>
+
             <!-- Class Hero Card -->
             <div class="bg-white rounded-[2rem] p-8 shadow-sm">
                 <div class="flex items-center justify-between gap-4 flex-wrap">

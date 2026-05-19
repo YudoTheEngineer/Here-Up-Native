@@ -127,7 +127,6 @@ if (!$user_class || !$session) {
                 <a href="class.php" class="hover:text-gray-600 transition-colors">Class</a>
                 <i data-lucide="chevron-right" class="w-3 h-3"></i>
                 <a href="admin-class.php?class_id=<?php echo htmlspecialchars($class_id); ?>" class="hover:text-gray-600 transition-colors">
-                    <!-- placeholder, ganti dengan nama class jika query class tersedia -->
                     Admin Class
                 </a>
                 <i data-lucide="chevron-right" class="w-3 h-3"></i>
