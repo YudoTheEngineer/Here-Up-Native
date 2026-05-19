@@ -162,10 +162,10 @@ $session_result = mysqli_query($connection, $session_query);
                             <i data-lucide="play-circle" class="w-4 h-4"></i>
                             Create Session
                         </button>
-                        <button onclick="alert('Session History')"
+                        <button id="btnToggleView" onclick="toggleView()"
                             class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
-                            <i data-lucide="history" class="w-4 h-4"></i>
-                            See All Session
+                            <i id="btnToggleIcon" data-lucide="history" class="w-4 h-4"></i>
+                            <span id="btnToggleLabel">See All Session</span>
                         </button>
                         <button onclick="openAddMemberModal()"
                             class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
@@ -180,15 +180,13 @@ $session_result = mysqli_query($connection, $session_query);
             <div class="bg-white rounded-[2rem] p-8 shadow-sm">
                 <h2 class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-6">All Your Member Class</h2>
 
-                <div class="overflow-x-auto hidden">
-                    <!-- Lebar minimum dinaikkan sedikit agar kolom gender muat dengan lega -->
+                <div id="containerTableMember" class="overflow-x-auto">
                     <table class="w-full text-sm border-collapse min-w-[750px]">
                         <thead>
                             <tr class="border-b border-gray-100">
                                 <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[5%]">No</th>
                                 <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[20%]">Fullname</th>
                                 
-                                <!-- KEPALA KOLOM BARU: GENDER -->
                                 <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[8%]">Gender</th>
                                 
                                 <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[10%]">
@@ -238,17 +236,14 @@ $session_result = mysqli_query($connection, $session_query);
 
                                 <td class="py-4 text-center">
                                     <?php if ($member['gender'] == 1 || strtolower($member['gender']) == 'male'): ?>
-                                        <!-- Ikon Male (Mars) dengan Tooltip -->
                                         <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50" title="Male">
                                             <i data-lucide="mars" class="w-4 h-4 text-blue-400"></i>
                                         </span>
                                     <?php elseif ($member['gender'] == 2 || strtolower($member['gender']) == 'female'): ?>
-                                        <!-- Ikon Female (Venus) dengan Tooltip -->
                                         <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-pink-50" title="Female">
                                             <i data-lucide="venus" class="w-4 h-4 text-pink-400"></i>
                                         </span>
                                     <?php else: ?>
-                                        <!-- Antisipasi jika data kosong/belum diisi -->
                                         <span class="text-gray-300 text-xs">-</span>
                                     <?php endif; ?>
                                 </td>
@@ -292,123 +287,102 @@ $session_result = mysqli_query($connection, $session_query);
                                 </td>
                             </tr>
                             <?php endwhile; ?>
-                        </tbody>
-                    </table>
+                        </table>
+                    </tbody>
                 </div>
+                
+                <div id="containerTableSession" class="flex flex-col gap-3 hidden">
+                    <?php
+                        if (isset($session_result) && mysqli_num_rows($session_result) > 0):
+                            while($session = mysqli_fetch_assoc($session_result)):
+                    ?>
+                    <div class="border border-gray-100 rounded-2xl p-5 hover:border-gray-200 transition-all cursor-pointer flex flex-col">
+                        
+                        <!-- Card Header -->
+                        <div class="flex items-start gap-3 mb-3">
+                            <!-- Icon Box -->
+                            <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                <i data-lucide="book-open" class="w-4 h-4 text-blue-400"></i>
+                            </div>
 
-                <div id="containerTableSession" class="overflow-x-auto">
-                    <table class="w-full text-sm border-collapse min-w-[850px]">
-                        <thead>
-                            <tr class="border-b border-gray-100">
-                                <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[5%]">No</th>
-                                <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[22%]">Session Name</th>
-                                <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[25%]">Description</th>
-                                <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[15%]">Start Time</th>
-                                <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[15%]">End Time</th>
-                                <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[8%]">Timezone</th>
-                                <th class="text-right text-xs font-medium text-gray-400 tracking-wide pb-3 w-[10%]">Status</th>
-                            </tr>
-                        </thead>
-                        <tbody>
-                            <?php
-                                if (isset($session_result) && mysqli_num_rows($session_result) > 0):
-                                    $s_row = 1;
-                                    while($session = mysqli_fetch_assoc($session_result)):
-                            ?>
-                            <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                                <!-- Nomor -->
-                                <td class="py-5 text-xs text-gray-400"><?= $s_row++; ?></td>
-                                
-                                <!-- Nama Sesi -->
-                                <td class="py-5 pl-3">
-                                    <span class="inline-flex items-center gap-2 text-xs font-semibold text-gray-700">
-                                        <div class="w-7 h-7 rounded-lg bg-blue-50 flex items-center justify-center text-blue-500 flex-shrink-0">
-                                            <i data-lucide="book-open" class="w-4 h-4"></i>
-                                        </div>
+                            <!-- Name + Description -->
+                            <div class="flex-1 min-w-0">
+                                <div class="flex items-center justify-between gap-2">
+                                    <span class="text-[13px] font-semibold text-gray-700 truncate">
                                         <?= htmlspecialchars($session["name"]); ?>
                                     </span>
-                                </td>
-                                
-                                <!-- Deskripsi (Support hingga 255 karakter dengan tinggi baris aman) -->
-                                <td class="py-5 pr-4">
-                                    <?php if (!empty($session["description"])): ?>
-                                        <p class="text-xs text-gray-500 leading-relaxed max-w-[240px] whitespace-normal break-words">
-                                            <?= htmlspecialchars($session["description"]); ?>
-                                        </p>
-                                    <?php else: ?>
-                                        <span class="inline-flex items-center gap-1 text-xs text-gray-300 italic font-light">
-                                            <i data-lucide="help-circle" class="w-3.5 h-3.5 opacity-60"></i>
-                                            No description provided
-                                        </span>
-                                    <?php endif; ?>
-                                </td>
-                                
-                                <!-- Start Time -->
-                                <td class="py-5 text-center">
-                                    <div class="flex flex-col items-center line-height-1.2">
-                                        <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-600">
-                                            <i data-lucide="calendar" class="w-3 h-3 text-gray-400"></i>
-                                            <?= date("d M Y", strtotime($session["start_time"])); ?>
-                                        </span>
-                                        <span class="text-[11px] text-gray-400 mt-0.5 font-mono">
-                                            <?= date("H:i", strtotime($session["start_time"])); ?>
-                                        </span>
-                                    </div>
-                                </td>
-                                
-                                <!-- End Time -->
-                                <td class="py-5 text-center">
-                                    <div class="flex flex-col items-center line-height-1.2">
-                                        <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-600">
-                                            <i data-lucide="calendar" class="w-3 h-3 text-gray-400"></i>
-                                            <?= date("d M Y", strtotime($session["end_time"])); ?>
-                                        </span>
-                                        <span class="text-[11px] text-gray-400 mt-0.5 font-mono">
-                                            <?= date("H:i", strtotime($session["end_time"])); ?>
-                                        </span>
-                                    </div>
-                                </td>
-                                
-                                <!-- Timezone -->
-                                <td class="py-5 text-center">
-                                    <span class="text-[10px] bg-gray-100 text-gray-500 px-2 py-0.5 rounded font-bold uppercase tracking-wider">
-                                        <?= htmlspecialchars($session["timezone"]); ?>
-                                    </span>
-                                </td>
-                                
-                                <!-- Status Badge -->
-                                <td class="py-5 text-right">
-                                    <?php if ($session["is_active"] == '1'): ?>
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium bg-green-50 text-green-600 animate-pulse">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500"></span>
-                                            Active
-                                        </span>
-                                    <?php else: ?>
-                                        <span class="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-lg text-[11px] font-medium bg-gray-50 text-gray-400">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                                            Closed
-                                        </span>
-                                    <?php endif; ?>
-                                </td>
-                            </tr>
-                            <?php 
-                                    endwhile;
-                                else: 
-                            ?>
-                            <tr>
-                                <td colspan="7" class="py-12 text-center">
-                                    <div class="flex flex-col items-center justify-center gap-2 text-gray-400">
-                                        <i data-lucide="folder-open" class="w-8 h-8 text-gray-300"></i>
-                                        <span class="text-xs italic font-medium">No sessions created yet for this class.</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <?php endif; ?>
-                        </tbody>
-                    </table>
-                </div>
-            </div>
 
+                                    <?php if ($session["is_active"] == '1'): ?>
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-[3px] rounded-full text-[10px] font-medium bg-green-50 text-green-600 flex-shrink-0">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                        Active
+                                    </span>
+                                    <?php else: ?>
+                                    <span class="inline-flex items-center gap-1.5 px-2 py-[3px] rounded-full text-[10px] font-medium bg-gray-50 text-gray-400 flex-shrink-0">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                                        Closed
+                                    </span>
+                                    <?php endif; ?>
+                                </div>
+
+                                <?php if (!empty($session["description"])): ?>
+                                <p class="text-[12px] text-gray-400 mt-1 leading-relaxed line-clamp-2">
+                                    <?= htmlspecialchars($session["description"]); ?>
+                                </p>
+                                <?php else: ?>
+                                <p class="text-[12px] text-gray-300 mt-1 italic font-light inline-flex items-center gap-1">
+                                    <i data-lucide="help-circle" class="w-3 h-3 opacity-60"></i>
+                                    No description provided
+                                </p>
+                                <?php endif; ?>
+                            </div>
+                        </div>
+
+                        <!-- Divider -->
+                        <div class="border-t border-gray-50 my-0"></div>
+
+                        <!-- Footer: Date & Timezone -->
+                        <div class="flex items-center justify-between flex-wrap gap-2 mt-3">
+                            <div class="flex items-center gap-2 flex-wrap">
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500">
+                                    <i data-lucide="calendar" class="w-3 h-3"></i>
+                                    <?= date("d M Y", strtotime($session["start_time"])); ?>
+                                </span>
+                                <span class="text-[11px] text-gray-300">→</span>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500">
+                                    <i data-lucide="calendar-check" class="w-3 h-3"></i>
+                                    <?= date("d M Y", strtotime($session["end_time"])); ?>
+                                </span>
+                            </div>
+                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[10px] font-bold text-gray-500 uppercase tracking-wider font-mono">
+                                <i data-lucide="clock" class="w-3 h-3"></i>
+                                <?= htmlspecialchars($session["timezone"]); ?>
+                            </span>
+                        </div>
+
+                        <!-- Time Range -->
+                        <div class="flex items-center gap-1.5 mt-2">
+                            <i data-lucide="clock-4" class="w-3 h-3 text-gray-300"></i>
+                            <span class="text-[11px] text-gray-400 font-mono">
+                                <?= date("H:i", strtotime($session["start_time"])); ?>
+                            </span>
+                            <span class="text-[11px] text-gray-300">–</span>
+                            <span class="text-[11px] text-gray-400 font-mono">
+                                <?= date("H:i", strtotime($session["end_time"])); ?>
+                            </span>
+                        </div>
+
+                    </div>
+                    <?php 
+                            endwhile;
+                        else: 
+                    ?>
+                    <div class="py-12 flex flex-col items-center justify-center gap-2 text-gray-400">
+                        <i data-lucide="folder-open" class="w-8 h-8 text-gray-300"></i>
+                        <span class="text-xs italic font-medium">No sessions created yet for this class.</span>
+                    </div>
+                    <?php endif; ?>
+                </div>
         </main>
     </div>
 
@@ -842,6 +816,36 @@ $session_result = mysqli_query($connection, $session_query);
     <script src="../scripts/admin-class-validation.js"></script>
     <script>
         lucide.createIcons();
+
+        document.getElementById("btnToggleView").addEventListener("click", function () {
+            const tableMember  = document.getElementById("containerTableMember");
+            const tableSession = document.getElementById("containerTableSession");
+            const btnLabel     = document.getElementById("btnToggleLabel");
+            const btnIcon      = document.getElementById("btnToggleIcon");
+
+            console.log("toggle clicked", { tableMember, tableSession, btnLabel, btnIcon });
+
+            if (!tableMember || !tableSession || !btnLabel || !btnIcon) {
+                console.warn("Elemen tidak ditemukan!");
+                return;
+            }
+
+            const isSession = !tableMember.classList.contains("hidden");
+
+            if (isSession) {
+                tableMember.classList.add("hidden");
+                tableSession.classList.remove("hidden");
+                btnLabel.textContent = "See All Members";
+                btnIcon.setAttribute("data-lucide", "users");
+            } else {
+                tableMember.classList.remove("hidden");
+                tableSession.classList.add("hidden");
+                btnLabel.textContent = "See All Session";
+                btnIcon.setAttribute("data-lucide", "history");
+            }
+
+            lucide.createIcons();
+        });
     </script>
 </body>
 </html>
