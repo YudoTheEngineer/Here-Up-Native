@@ -21,12 +21,15 @@ $class_id = $_GET["class_id"];
 $user_id = $_SESSION["session"]["id"];
 $user_class_query = "SELECT * FROM user_class WHERE user_id = '$user_id' AND class_id = '$class_id' LIMIT 1";
 $user_class = mysqli_fetch_assoc(mysqli_query($connection, $user_class_query));
-$session_query = "SELECT * FROM session WHERE created_by = '$user_id' AND class_id = $class_id LIMIT 1";
+$session_query = "SELECT * FROM session WHERE id = '$session_id' LIMIT 1";
 $session = mysqli_fetch_assoc(mysqli_query($connection, $session_query));
 if (!$user_class || !$session) {
     header("Location: ../views/dashboard.php");
     exit();
 }
+
+$member_query = "SELECT * FROM member WHERE class_id = $class_id";
+$member_result = mysqli_query($connection, $member_query);
 ?>
 
 <!DOCTYPE html>
@@ -148,50 +151,53 @@ if (!$user_class || !$session) {
                             <p class="text-[11px] font-semibold text-[#93C5FD] uppercase tracking-widest mb-1">Session Detail</p>
                             <div class="flex items-center gap-2 mb-1">
                                 <h2 class="text-xl font-bold text-gray-800 leading-tight">
-                                    <!-- Ganti dengan: <?php // echo htmlspecialchars($session["name"]); ?> -->
-                                    Session Name Placeholder
+                                    <?= htmlspecialchars($session["name"])?>
                                 </h2>
-                                <!-- Status Badge — ganti kondisi dengan: $session["is_active"] == 1 -->
+                                <?php
+                                    if ($session["is_active"] === "1"):
+                                ?>
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[10px] font-medium bg-green-50 text-green-600 flex-shrink-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
                                     Active
                                 </span>
-                                <!-- Contoh status closed (tampilkan salah satu sesuai kondisi):
+
+                                <?php else: ?>
                                 <span class="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[10px] font-medium bg-gray-50 text-gray-400 flex-shrink-0">
                                     <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
                                     Closed
                                 </span>
-                                -->
+                                <?php endif;?>
                             </div>
 
                             <!-- Description -->
                             <p class="text-sm text-gray-400 leading-relaxed max-w-lg">
-                                <!-- Ganti dengan: <?php // echo htmlspecialchars($session["description"]); ?> -->
-                                Session description placeholder. Describes what this session is about.
+                                <?php 
+                                    if($session["description"]) { 
+                                        htmlspecialchars($session["description"]);
+                                        } else { 
+                                            echo "..."; 
+                                        }
+                                ?>
                             </p>
 
                             <!-- Meta: Time & Timezone -->
                             <div class="flex items-center gap-2 flex-wrap mt-3">
                                 <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500">
                                     <i data-lucide="calendar" class="w-3 h-3"></i>
-                                    <!-- <?php // echo date("d M Y", strtotime($session["start_time"])); ?> -->
-                                    01 Jan 2025
+                                    <?php echo date("d M Y", strtotime($session["start_time"])); ?>
                                 </span>
                                 <span class="text-[11px] text-gray-300">→</span>
                                 <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500">
                                     <i data-lucide="calendar-check" class="w-3 h-3"></i>
-                                    <!-- <?php // echo date("d M Y", strtotime($session["end_time"])); ?> -->
-                                    01 Jan 2025
+                                    <?php echo date("d M Y", strtotime($session["start_time"])); ?>
                                 </span>
                                 <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500 font-mono">
                                     <i data-lucide="clock-4" class="w-3 h-3"></i>
-                                    <!-- <?php // echo date("H:i", strtotime($session["start_time"])); ?> – <?php // echo date("H:i", strtotime($session["end_time"])); ?> -->
-                                    08:00 – 10:00
+                                    <?php echo date("H:i", strtotime($session["start_time"])); ?> - <?php echo date("H:i", strtotime($session["end_time"])); ?>
                                 </span>
                                 <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[10px] font-bold text-gray-500 uppercase tracking-wider font-mono">
                                     <i data-lucide="globe" class="w-3 h-3"></i>
-                                    <!-- <?php // echo htmlspecialchars($session["timezone"]); ?> -->
-                                    UTC+7
+                                    <?php echo htmlspecialchars($session["timezone"]); ?>
                                 </span>
                             </div>
                         </div>
@@ -199,24 +205,23 @@ if (!$user_class || !$session) {
 
                     <!-- Right: Action Buttons -->
                     <div class="flex items-center gap-3 flex-wrap">
+
+                        <!-- Close Session Button -->
+                        <?php
+                            if ($session["is_active"] === "1"):
+                        ?>
                         <button onclick="openEditSessionModal()"
                             class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
                             <i data-lucide="pencil" class="w-4 h-4"></i>
                             Edit Session
                         </button>
-                        <!-- Toggle active/close — ganti logika sesuai $session["is_active"] -->
+
                         <button
-                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-red-50 text-red-400 rounded-xl text-sm font-medium hover:bg-red-100 transition-all border border-red-100">
+                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-400 rounded-xl text-sm font-medium hover:bg-blue-100 transition-all border border-blue-100">
                             <i data-lucide="stop-circle" class="w-4 h-4"></i>
                             Close Session
                         </button>
-                        <!-- Jika session sudah closed, tampilkan tombol ini:
-                        <button
-                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-green-50 text-green-500 rounded-xl text-sm font-medium hover:bg-green-100 transition-all border border-green-100">
-                            <i data-lucide="play-circle" class="w-4 h-4"></i>
-                            Reopen Session
-                        </button>
-                        -->
+                        <?php endif;?>
                     </div>
                 </div>
             </div>
@@ -289,153 +294,53 @@ if (!$user_class || !$session) {
                             </tr>
                         </thead>
                         <tbody>
-                            <!-- Placeholder rows — ganti dengan loop dari database -->
+                            <?php
+                                $row = 1;
+                                while($member = mysqli_fetch_assoc($member_result)):
+                            ?>
                             <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                                <td class="py-4 text-xs text-gray-400">1</td>
+                                <td class="py-4 text-xs text-gray-400"><?= $row++;?></td>
                                 <td class="py-4 pl-3">
                                     <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
                                         <div class="w-[22px] h-[22px] rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
-                                            <img src="../../storage/profile_picture/default-profile-1.svg" alt="Member" class="w-full h-full object-cover">
+                                            <img src="../../storage/profile_picture/<?= htmlspecialchars($member['profile_picture'])?>" alt="Member" class="w-full h-full object-cover">
                                         </div>
-                                        John Doe
+                                        <?= htmlspecialchars($member["fullname"])?>
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
-                                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50" title="Male">
-                                        <i data-lucide="mars" class="w-4 h-4 text-blue-400"></i>
-                                    </span>
+                                    <?php if ($member['gender'] == 1 || strtolower($member['gender']) == 'male'): ?>
+                                        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50" title="Male">
+                                            <i data-lucide="mars" class="w-4 h-4 text-blue-400"></i>
+                                        </span>
+                                    <?php elseif ($member['gender'] == 2 || strtolower($member['gender']) == 'female'): ?>
+                                        <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-pink-50" title="Female">
+                                            <i data-lucide="venus" class="w-4 h-4 text-pink-400"></i>
+                                        </span>
+                                    <?php else: ?>
+                                        <span class="text-gray-300 text-xs">-</span>
+                                    <?php endif; ?>
                                 </td>
                                 <td class="py-4 text-center">
-                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-green-50 text-green-600">
-                                        <i data-lucide="check-circle-2" class="w-3 h-3"></i>
-                                        Present
+                                    <span class="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[10px] font-medium bg-gray-50 text-gray-400 flex-shrink-0">
+                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0"></span>
+                                        Not Marked
                                     </span>
                                 </td>
                                 <td class="py-4">
-                                    <span class="text-xs text-gray-400 italic">—</span>
+                                    <span class="text-xs text-gray-400 italic">...</span>
                                 </td>
                                 <td class="py-4 text-right">
                                     <div class="flex flex-col items-end">
                                         <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-700">
                                             <i data-lucide="calendar" class="w-3 h-3 text-gray-400"></i>
-                                            01 January 2025
+                                            01 January 2026
                                         </span>
-                                        <span class="text-[11px] text-gray-400 mt-0.5 font-mono">08:45 UTC</span>
+                                        <span class="text-[11px] text-gray-400 mt-0.5 font-mono">02:27</span>
                                     </div>
                                 </td>
                             </tr>
-                            <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                                <td class="py-4 text-xs text-gray-400">2</td>
-                                <td class="py-4 pl-3">
-                                    <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
-                                        <div class="w-[22px] h-[22px] rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
-                                            <img src="../../storage/profile_picture/default-profile-2.svg" alt="Member" class="w-full h-full object-cover">
-                                        </div>
-                                        Jane Smith
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-pink-50" title="Female">
-                                        <i data-lucide="venus" class="w-4 h-4 text-pink-400"></i>
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-yellow-50 text-yellow-600">
-                                        <i data-lucide="file-text" class="w-3 h-3"></i>
-                                        Excused
-                                    </span>
-                                </td>
-                                <td class="py-4">
-                                    <span class="text-xs text-gray-500">Family event</span>
-                                </td>
-                                <td class="py-4 text-right">
-                                    <div class="flex flex-col items-end">
-                                        <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-700">
-                                            <i data-lucide="calendar" class="w-3 h-3 text-gray-400"></i>
-                                            01 January 2025
-                                        </span>
-                                        <span class="text-[11px] text-gray-400 mt-0.5 font-mono">08:30 UTC</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                                <td class="py-4 text-xs text-gray-400">3</td>
-                                <td class="py-4 pl-3">
-                                    <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
-                                        <div class="w-[22px] h-[22px] rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
-                                            <img src="../../storage/profile_picture/default-profile-3.svg" alt="Member" class="w-full h-full object-cover">
-                                        </div>
-                                        Alex Tan
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50" title="Male">
-                                        <i data-lucide="mars" class="w-4 h-4 text-blue-400"></i>
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-blue-50 text-blue-600">
-                                        <i data-lucide="heart-pulse" class="w-3 h-3"></i>
-                                        Sick
-                                    </span>
-                                </td>
-                                <td class="py-4">
-                                    <span class="text-xs text-gray-500">Fever since yesterday</span>
-                                </td>
-                                <td class="py-4 text-right">
-                                    <div class="flex flex-col items-end">
-                                        <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-700">
-                                            <i data-lucide="calendar" class="w-3 h-3 text-gray-400"></i>
-                                            01 January 2025
-                                        </span>
-                                        <span class="text-[11px] text-gray-400 mt-0.5 font-mono">09:00 UTC</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                                <td class="py-4 text-xs text-gray-400">4</td>
-                                <td class="py-4 pl-3">
-                                    <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
-                                        <div class="w-[22px] h-[22px] rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
-                                            <img src="../../storage/profile_picture/default-profile-4.svg" alt="Member" class="w-full h-full object-cover">
-                                        </div>
-                                        Rina Kusuma
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-pink-50" title="Female">
-                                        <i data-lucide="venus" class="w-4 h-4 text-pink-400"></i>
-                                    </span>
-                                </td>
-                                <td class="py-4 text-center">
-                                    <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-red-50 text-red-500">
-                                        <i data-lucide="x-circle" class="w-3 h-3"></i>
-                                        Not Excused
-                                    </span>
-                                </td>
-                                <td class="py-4">
-                                    <span class="text-xs text-gray-400 italic">—</span>
-                                </td>
-                                <td class="py-4 text-right">
-                                    <div class="flex flex-col items-end">
-                                        <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-700">
-                                            <i data-lucide="calendar" class="w-3 h-3 text-gray-400"></i>
-                                            01 January 2025
-                                        </span>
-                                        <span class="text-[11px] text-gray-400 mt-0.5 font-mono">09:15 UTC</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            <!-- Empty state — tampilkan jika tidak ada data:
-                            <tr>
-                                <td colspan="6" class="py-12">
-                                    <div class="flex flex-col items-center justify-center gap-2 text-gray-400">
-                                        <i data-lucide="clipboard" class="w-8 h-8 text-gray-300"></i>
-                                        <span class="text-xs italic font-medium">No attendance recorded yet for this session.</span>
-                                    </div>
-                                </td>
-                            </tr>
-                            -->
+                            <?php endwhile;?>
                         </tbody>
                     </table>
                 </div>

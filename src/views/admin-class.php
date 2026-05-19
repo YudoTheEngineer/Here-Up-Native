@@ -185,7 +185,7 @@ $session_result = mysqli_query($connection, $session_query);
             </div>
 
             <div class="bg-white rounded-[2rem] p-8 shadow-sm">
-                <h2 class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-6">All Your Member Class</h2>
+                <h2 id="tableTitle" class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-6">All Your Member Class</h2>
 
                 <div id="containerTableMember" class="overflow-x-auto">
                     <table class="w-full text-sm border-collapse min-w-[750px]">
@@ -831,10 +831,11 @@ $session_result = mysqli_query($connection, $session_query);
             const tableSession = document.getElementById("containerTableSession");
             const btnLabel     = document.getElementById("btnToggleLabel");
             const btnIcon      = document.getElementById("btnToggleIcon");
+            const tableTitle   = document.getElementById("tableTitle");
 
             console.log("toggle clicked", { tableMember, tableSession, btnLabel, btnIcon });
 
-            if (!tableMember || !tableSession || !btnLabel || !btnIcon) {
+            if (!tableMember || !tableSession || !btnLabel || !btnIcon || !tableTitle) {
                 console.warn("Elemen tidak ditemukan!");
                 return;
             }
@@ -846,10 +847,12 @@ $session_result = mysqli_query($connection, $session_query);
                 tableSession.classList.remove("hidden");
                 btnLabel.textContent = "See All Members";
                 btnIcon.setAttribute("data-lucide", "users");
+                tableTitle.textContent = "All Your Session Class";
             } else {
                 tableMember.classList.remove("hidden");
                 tableSession.classList.add("hidden");
                 btnLabel.textContent = "See All Session";
+                tableTitle.textContent = "All Your Member Class";
                 btnIcon.setAttribute("data-lucide", "history");
             }
 
