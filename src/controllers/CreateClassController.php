@@ -60,7 +60,7 @@ if (!empty($_FILES['class_profile_picture']['name'])) {
     $profile_picture = $newFileName;
 
 } else {
-    // Pakai default photo yang dipilih
+    // Default profile
     $profile_picture = $_POST['class_default_photo'] ?? 'default-profile-1.svg';
 }
 
