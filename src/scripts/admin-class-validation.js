@@ -383,7 +383,6 @@ document.addEventListener("DOMContentLoaded", () => {
         const error = document.getElementById("error-timezone");
         if (!input) return false;
 
-        // Mendeteksi value kosong atau indeks opsi default "Select timezone"
         if (input.value === "" || input.selectedIndex === 0) {
             showError(input, error, "Please select a timezone.");
             return false;
@@ -402,7 +401,6 @@ document.addEventListener("DOMContentLoaded", () => {
         if (err && !err.classList.contains("hidden")) validateSessionName();
     });
 
-    // Cukup satu listener terpadu untuk live validation change select timezone
     document.getElementById("timezone")?.addEventListener("change", () => {
         const err = document.getElementById("error-timezone");
         if (err && !err.classList.contains("hidden")) validateTimezone();
@@ -418,10 +416,8 @@ document.addEventListener("DOMContentLoaded", () => {
         const isEndValid      = validateEndTime();
         const isTimezoneValid = validateTimezone();
 
-        // Jika salah satu dari 4 variabel bernilai false, cegah pengiriman form
         if (!isNameValid || !isStartValid || !isEndValid || !isTimezoneValid) {
             
-            // Loop manual mencari id elemen pertama yang memicu border-red-400
             const invalidId = ["session_name", "start_time", "end_time", "timezone"].find(id => {
                 const el = document.getElementById(id);
                 return el && el.classList.contains("border-red-400");
@@ -435,12 +431,8 @@ document.addEventListener("DOMContentLoaded", () => {
             return; 
         }
 
-        // Lolos semua sensor, submit form
         document.getElementById("formCreateSession").submit();
     };
-
-
-    // ── Tutup Modal dengan Escape ────────────────────────────────────────────
 
     document.addEventListener("keydown", (e) => {
         if (e.key === "Escape") {
