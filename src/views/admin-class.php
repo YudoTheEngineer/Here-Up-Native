@@ -296,92 +296,94 @@ $session_result = mysqli_query($connection, $session_query);
                         if (isset($session_result) && mysqli_num_rows($session_result) > 0):
                             while($session = mysqli_fetch_assoc($session_result)):
                     ?>
-                    <div class="border border-gray-100 rounded-2xl p-5 hover:border-gray-200 transition-all cursor-pointer flex flex-col">
-                        
-                        <!-- Card Header -->
-                        <div class="flex items-start gap-3 mb-3">
-                            <!-- Icon Box -->
-                            <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
-                                <i data-lucide="book-open" class="w-4 h-4 text-blue-400"></i>
-                            </div>
-
-                            <!-- Name + Description -->
-                            <div class="flex-1 min-w-0">
-                                <div class="flex items-center justify-between gap-2">
-                                    <span class="text-[13px] font-semibold text-gray-700 truncate">
-                                        <?= htmlspecialchars($session["name"]); ?>
-                                    </span>
-
-                                    <?php if ($session["is_active"] == '1'): ?>
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-[3px] rounded-full text-[10px] font-medium bg-green-50 text-green-600 flex-shrink-0">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
-                                        Active
-                                    </span>
-                                    <?php else: ?>
-                                    <span class="inline-flex items-center gap-1.5 px-2 py-[3px] rounded-full text-[10px] font-medium bg-gray-50 text-gray-400 flex-shrink-0">
-                                        <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                                        Closed
-                                    </span>
-                                    <?php endif; ?>
+                    <a href="session.php?class_id=<?= htmlspecialchars($class_id)?>&session_id=<?= htmlspecialchars($session["id"])?>">
+                        <div class="border border-gray-100 rounded-2xl p-5 hover:border-gray-200 transition-all cursor-pointer flex flex-col">
+                            <!-- Card Header -->
+                            <div class="flex items-start gap-3 mb-3">
+                                <!-- Icon Box -->
+                                <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
+                                    <i data-lucide="book-open" class="w-4 h-4 text-blue-400"></i>
                                 </div>
 
-                                <?php if (!empty($session["description"])): ?>
-                                <p class="text-[12px] text-gray-400 mt-1 leading-relaxed line-clamp-2">
-                                    <?= htmlspecialchars($session["description"]); ?>
-                                </p>
-                                <?php else: ?>
-                                <p class="text-[12px] text-gray-300 mt-1 italic font-light inline-flex items-center gap-1">
-                                    <i data-lucide="help-circle" class="w-3 h-3 opacity-60"></i>
-                                    No description provided
-                                </p>
-                                <?php endif; ?>
+                                <!-- Name + Description -->
+                                <div class="flex-1 min-w-0">
+                                    <div class="flex items-center justify-between gap-2">
+                                        <span class="text-[13px] font-semibold text-gray-700 truncate">
+                                            <?= htmlspecialchars($session["name"]); ?>
+                                        </span>
+
+                                        <?php if ($session["is_active"] == '1'): ?>
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-[3px] rounded-full text-[10px] font-medium bg-green-50 text-green-600 flex-shrink-0">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
+                                            Active
+                                        </span>
+                                        <?php else: ?>
+                                        <span class="inline-flex items-center gap-1.5 px-2 py-[3px] rounded-full text-[10px] font-medium bg-gray-50 text-gray-400 flex-shrink-0">
+                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
+                                            Closed
+                                        </span>
+                                        <?php endif; ?>
+                                    </div>
+
+                                    <?php if (!empty($session["description"])): ?>
+                                    <p class="text-[12px] text-gray-400 mt-1 leading-relaxed line-clamp-2">
+                                        <?= htmlspecialchars($session["description"]); ?>
+                                    </p>
+                                    <?php else: ?>
+                                    <p class="text-[12px] text-gray-300 mt-1 italic font-light inline-flex items-center gap-1">
+                                        <i data-lucide="help-circle" class="w-3 h-3 opacity-60"></i>
+                                        No description provided
+                                    </p>
+                                    <?php endif; ?>
+                                </div>
                             </div>
-                        </div>
 
-                        <!-- Divider -->
-                        <div class="border-t border-gray-50 my-0"></div>
+                            <!-- Divider -->
+                            <div class="border-t border-gray-50 my-0"></div>
 
-                        <!-- Footer: Date & Timezone -->
-                        <div class="flex items-center justify-between flex-wrap gap-2 mt-3">
-                            <div class="flex items-center gap-2 flex-wrap">
-                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500">
-                                    <i data-lucide="calendar" class="w-3 h-3"></i>
-                                    <?= date("d M Y", strtotime($session["start_time"])); ?>
-                                </span>
-                                <span class="text-[11px] text-gray-300">→</span>
-                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500">
-                                    <i data-lucide="calendar-check" class="w-3 h-3"></i>
-                                    <?= date("d M Y", strtotime($session["end_time"])); ?>
+                            <!-- Footer: Date & Timezone -->
+                            <div class="flex items-center justify-between flex-wrap gap-2 mt-3">
+                                <div class="flex items-center gap-2 flex-wrap">
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500">
+                                        <i data-lucide="calendar" class="w-3 h-3"></i>
+                                        <?= date("d M Y", strtotime($session["start_time"])); ?>
+                                    </span>
+                                    <span class="text-[11px] text-gray-300">→</span>
+                                    <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[11px] text-gray-500">
+                                        <i data-lucide="calendar-check" class="w-3 h-3"></i>
+                                        <?= date("d M Y", strtotime($session["end_time"])); ?>
+                                    </span>
+                                </div>
+                                <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[10px] font-bold text-gray-500 uppercase tracking-wider font-mono">
+                                    <i data-lucide="clock" class="w-3 h-3"></i>
+                                    <?= htmlspecialchars($session["timezone"]); ?>
                                 </span>
                             </div>
-                            <span class="inline-flex items-center gap-1 px-2 py-1 bg-gray-50 rounded-lg text-[10px] font-bold text-gray-500 uppercase tracking-wider font-mono">
-                                <i data-lucide="clock" class="w-3 h-3"></i>
-                                <?= htmlspecialchars($session["timezone"]); ?>
-                            </span>
-                        </div>
 
-                        <!-- Time Range -->
-                        <div class="flex items-center gap-1.5 mt-2">
-                            <i data-lucide="clock-4" class="w-3 h-3 text-gray-300"></i>
-                            <span class="text-[11px] text-gray-400 font-mono">
-                                <?= date("H:i", strtotime($session["start_time"])); ?>
-                            </span>
-                            <span class="text-[11px] text-gray-300">–</span>
-                            <span class="text-[11px] text-gray-400 font-mono">
-                                <?= date("H:i", strtotime($session["end_time"])); ?>
-                            </span>
-                        </div>
+                            <!-- Time Range -->
+                            <div class="flex items-center gap-1.5 mt-2">
+                                <i data-lucide="clock-4" class="w-3 h-3 text-gray-300"></i>
+                                <span class="text-[11px] text-gray-400 font-mono">
+                                    <?= date("H:i", strtotime($session["start_time"])); ?>
+                                </span>
+                                <span class="text-[11px] text-gray-300">–</span>
+                                <span class="text-[11px] text-gray-400 font-mono">
+                                    <?= date("H:i", strtotime($session["end_time"])); ?>
+                                </span>
+                            </div>
 
+                        </div>
+                        <?php 
+                                endwhile;
+                            else: 
+                        ?>
+                        <div class="py-12 flex flex-col items-center justify-center gap-2 text-gray-400">
+                            <i data-lucide="folder-open" class="w-8 h-8 text-gray-300"></i>
+                            <span class="text-xs italic font-medium">No sessions created yet for this class.</span>
+                        </div>
+                        <?php endif; ?>
                     </div>
-                    <?php 
-                            endwhile;
-                        else: 
-                    ?>
-                    <div class="py-12 flex flex-col items-center justify-center gap-2 text-gray-400">
-                        <i data-lucide="folder-open" class="w-8 h-8 text-gray-300"></i>
-                        <span class="text-xs italic font-medium">No sessions created yet for this class.</span>
-                    </div>
-                    <?php endif; ?>
+                        </a>
                 </div>
         </main>
     </div>
