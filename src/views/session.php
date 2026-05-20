@@ -203,7 +203,7 @@ $member_result = mysqli_query($connection, $member_query);
                     <!-- Right: Action Buttons -->
                     <div class="flex items-center gap-3 flex-wrap">
                         <?php if ($session["is_active"] === "1"): ?>
-                        <button onclick="openEditSessionModal()"
+                        <button
                             class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
                             <i data-lucide="pencil" class="w-4 h-4"></i>
                             Edit Session
@@ -211,8 +211,8 @@ $member_result = mysqli_query($connection, $member_query);
 
                         <button
                             class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-400 rounded-xl text-sm font-medium hover:bg-blue-100 transition-all border border-blue-100">
-                            <i data-lucide="stop-circle" class="w-4 h-4"></i>
-                            Close Session
+                            <i data-lucide="send" class="w-4 h-4"></i>
+                            Submit Attendance
                         </button>
                         <?php endif;?>
                     </div>
@@ -273,26 +273,12 @@ $member_result = mysqli_query($connection, $member_query);
                     <!-- Buttons: default view -->
                     <div id="btnGroupList" class="flex items-center gap-3">
                         <?php if ($session["is_active"] === "1"): ?>
-                        <button onclick="switchToMarkMode()"
+                        <button
                             class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#93C5FD] text-white rounded-xl text-sm font-medium hover:bg-blue-400 transition-all shadow-sm">
                             <i data-lucide="clipboard-check" class="w-4 h-4"></i>
                             Mark Attendance
                         </button>
                         <?php endif; ?>
-                    </div>
-
-                    <!-- Buttons: mark mode -->
-                    <div id="btnGroupMark" class="hidden flex items-center gap-3">
-                        <button onclick="switchToListMode()"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
-                            <i data-lucide="x" class="w-4 h-4"></i>
-                            Cancel
-                        </button>
-                        <button onclick="submitAttendance('<?= $session_id ?>', '<?= $class_id ?>')"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#93C5FD] text-white rounded-xl text-sm font-medium hover:bg-blue-400 transition-all shadow-sm">
-                            <i data-lucide="send" class="w-4 h-4"></i>
-                            Submit Attendance
-                        </button>
                     </div>
                 </div>
 
@@ -327,11 +313,11 @@ $member_result = mysqli_query($connection, $member_query);
                                         </span>
                                     </td>
                                     <td class="py-4 text-center">
-                                        <?php if ($member['gender'] == 1 || strtolower($member['gender']) == 'male'): ?>
+                                        <?php if ($member['gender'] === "1") : ?>
                                             <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50" title="Male">
                                                 <i data-lucide="mars" class="w-4 h-4 text-blue-400"></i>
                                             </span>
-                                        <?php elseif ($member['gender'] == 2 || strtolower($member['gender']) == 'female'): ?>
+                                        <?php elseif ($member['gender'] === "2") :?>
                                             <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-pink-50" title="Female">
                                                 <i data-lucide="venus" class="w-4 h-4 text-pink-400"></i>
                                             </span>
@@ -352,9 +338,8 @@ $member_result = mysqli_query($connection, $member_query);
                                         <div class="flex flex-col items-end">
                                             <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-700">
                                                 <i data-lucide="calendar" class="w-3 h-3 text-gray-400"></i>
-                                                01 January 2026
                                             </span>
-                                            <span class="text-[11px] text-gray-400 mt-0.5 font-mono">02:27</span>
+                                            <span class="text-[11px] text-gray-400 mt-0.5 font-mono">00:00</span>
                                         </div>
                                     </td>
                                 </tr>
@@ -362,314 +347,14 @@ $member_result = mysqli_query($connection, $member_query);
                             </tbody>
                         </table>
                     </div>
-
-                    <!-- Container: Mark Attendance -->
-                    <div id="containerMarkAttendance" class="hidden">
-                        <table class="w-full text-sm border-collapse min-w-[700px]">
-                            <thead>
-                                <tr class="border-b border-gray-100">
-                                    <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[5%]">No</th>
-                                    <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[28%]">Member</th>
-                                    <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[8%]">Gender</th>
-                                    <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[20%]">Status</th>
-                                    <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[25%]">Note</th>
-                                    <th class="text-right text-xs font-medium text-gray-400 tracking-wide pb-3 w-[14%]">Action</th>
-                                </tr>
-                            </thead>
-                            <tbody>
-                                <?php
-                                    // Reset member result pointer
-                                    mysqli_data_seek($member_result, 0);
-                                    $row2 = 1;
-                                    while($member2 = mysqli_fetch_assoc($member_result)):
-                                        $mid = $member2['id'];
-                                ?>
-                                <tr id="mark-row-<?= $mid ?>" class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                                    <td class="py-4 text-xs text-gray-400"><?= $row2++;?></td>
-                                    <td class="py-4 pl-3">
-                                        <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
-                                            <div class="w-[22px] h-[22px] rounded-full overflow-hidden flex-shrink-0 bg-gray-100">
-                                                <img src="../../storage/profile_picture/<?= htmlspecialchars($member2['profile_picture'])?>" alt="Member" class="w-full h-full object-cover">
-                                            </div>
-                                            <?= htmlspecialchars($member2["fullname"])?>
-                                        </span>
-                                    </td>
-                                    <td class="py-4 text-center">
-                                        <?php if ($member2['gender'] == 1 || strtolower($member2['gender']) == 'male'): ?>
-                                            <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50" title="Male">
-                                                <i data-lucide="mars" class="w-4 h-4 text-blue-400"></i>
-                                            </span>
-                                        <?php elseif ($member2['gender'] == 2 || strtolower($member2['gender']) == 'female'): ?>
-                                            <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-pink-50" title="Female">
-                                                <i data-lucide="venus" class="w-4 h-4 text-pink-400"></i>
-                                            </span>
-                                        <?php else: ?>
-                                            <span class="text-gray-300 text-xs">-</span>
-                                        <?php endif; ?>
-                                    </td>
-                                    <!-- Status badge (updated after mark) -->
-                                    <td class="py-4 text-center">
-                                        <span id="status-badge-<?= $mid ?>" class="inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[10px] font-medium bg-gray-50 text-gray-400">
-                                            <span class="w-1.5 h-1.5 rounded-full bg-gray-300 shrink-0"></span>
-                                            Not Marked
-                                        </span>
-                                    </td>
-                                    <!-- Note (updated after mark) -->
-                                    <td class="py-4">
-                                        <span id="note-display-<?= $mid ?>" class="text-xs text-gray-400 italic">...</span>
-                                    </td>
-                                    <!-- Action -->
-                                    <td class="py-4 text-right">
-                                        <button
-                                            onclick="openMarkModal('<?= $mid ?>', '<?= htmlspecialchars($member2['fullname'], ENT_QUOTES) ?>')"
-                                            class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-[#93C5FD] text-white rounded-lg text-xs font-medium hover:bg-blue-400 transition-all">
-                                            <i data-lucide="clipboard-check" class="w-3.5 h-3.5"></i>
-                                            Mark
-                                        </button>
-                                    </td>
-                                </tr>
-                                <?php endwhile;?>
-                            </tbody>
-                        </table>
-                    </div>
-
                 </div>
             </div>
 
         </main>
     </div>
 
-    <!-- ── Modal: Mark Member ───────────────────────────────────────────────── -->
-    <div id="markModal" class="fixed inset-0 hidden items-center justify-center z-50">
-
-        <!-- Overlay -->
-        <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="closeMarkModal()"></div>
-
-        <!-- Modal Box -->
-        <div class="relative bg-white w-[420px] rounded-2xl border border-[#DEE1E6] p-6 z-10">
-
-            <!-- Header -->
-            <div class="flex items-center gap-3 mb-1">
-                <img class="h-[28px]" src="../../public/images/icon.png" alt="Icon">
-                <h1 class="text-lg text-[#87CEEB] font-bold">Mark Attendance</h1>
-            </div>
-            <p id="markModalMemberName" class="text-sm text-[#565D6D] mb-5"></p>
-
-            <!-- Status Options -->
-            <div class="mb-4">
-                <label class="text-sm text-[#565D6D] block mb-2">Status</label>
-                <div class="grid grid-cols-2 gap-2">
-                    <label onclick="selectStatus('present')" id="status-present"
-                        class="flex items-center gap-2 px-3 py-2.5 border-2 border-[#DEE1E6] rounded-xl cursor-pointer transition-all hover:border-green-300">
-                        <i data-lucide="check-circle-2" class="w-4 h-4 text-green-400"></i>
-                        <span class="text-sm text-[#565D6D]">Present</span>
-                    </label>
-                    <label onclick="selectStatus('excused')" id="status-excused"
-                        class="flex items-center gap-2 px-3 py-2.5 border-2 border-[#DEE1E6] rounded-xl cursor-pointer transition-all hover:border-yellow-300">
-                        <i data-lucide="file-text" class="w-4 h-4 text-yellow-400"></i>
-                        <span class="text-sm text-[#565D6D]">Excused</span>
-                    </label>
-                    <label onclick="selectStatus('sick')" id="status-sick"
-                        class="flex items-center gap-2 px-3 py-2.5 border-2 border-[#DEE1E6] rounded-xl cursor-pointer transition-all hover:border-blue-300">
-                        <i data-lucide="heart-pulse" class="w-4 h-4 text-blue-400"></i>
-                        <span class="text-sm text-[#565D6D]">Sick</span>
-                    </label>
-                    <label onclick="selectStatus('not_excused')" id="status-not_excused"
-                        class="flex items-center gap-2 px-3 py-2.5 border-2 border-[#DEE1E6] rounded-xl cursor-pointer transition-all hover:border-red-300">
-                        <i data-lucide="x-circle" class="w-4 h-4 text-red-400"></i>
-                        <span class="text-sm text-[#565D6D]">Not Excused</span>
-                    </label>
-                </div>
-                <p id="error-status" class="hidden text-xs text-red-400 mt-1">Please select a status.</p>
-            </div>
-
-            <!-- Note -->
-            <div class="mb-5">
-                <label class="text-sm text-[#565D6D] block mb-1">
-                    Note <span class="text-gray-300">(optional)</span>
-                </label>
-                <div class="relative">
-                    <textarea
-                        id="markNote"
-                        placeholder="e.g. came late, has a doctor's note..."
-                        rows="3"
-                        class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm resize-none"
-                    ></textarea>
-                    <i data-lucide="file-text" class="w-4 h-4 absolute left-3 top-3 text-gray-400"></i>
-                </div>
-            </div>
-
-            <!-- Buttons -->
-            <div class="flex gap-3">
-                <button
-                    type="button"
-                    onclick="confirmMark()"
-                    class="flex-1 py-3 bg-gradient-to-r from-[#7B61FF] via-[#3BC5BA] to-[#5D87E8] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-all">
-                    Confirm
-                </button>
-                <button
-                    type="button"
-                    onclick="closeMarkModal()"
-                    class="flex-1 py-3 border border-[#DEE1E6] rounded-xl text-sm text-[#565D6D] hover:bg-gray-50 transition-all">
-                    Cancel
-                </button>
-            </div>
-
-            <input type="hidden" id="markMemberId" value="">
-        </div>
-    </div>
-
     <script>
         lucide.createIcons();
-        // Draft tersimpan di memory selama halaman terbuka
-        var draft = {};
-        var currentMemberId = null;
-        var selectedStatus = null;
-
-        // Konfigurasi tampilan badge per status
-        var badgeConfig = {
-            present:     { bg: 'bg-green-50',  text: 'text-green-600',  dot: 'bg-green-500',  label: 'Present'     },
-            excused:     { bg: 'bg-yellow-50', text: 'text-yellow-600', dot: 'bg-yellow-500', label: 'Excused'     },
-            sick:        { bg: 'bg-blue-50',   text: 'text-blue-600',   dot: 'bg-blue-500',   label: 'Sick'        },
-            not_excused: { bg: 'bg-red-50',    text: 'text-red-500',    dot: 'bg-red-500',    label: 'Not Excused' }
-        };
-
-        // Warna border status di modal
-        var statusBorderMap = {
-            present:     'border-green-400',
-            excused:     'border-yellow-400',
-            sick:        'border-blue-400',
-            not_excused: 'border-red-400'
-        };
-
-        // Semua status yang ada
-        var allStatuses = ['present', 'excused', 'sick', 'not_excused'];
-
-        // ── Toggle tabel ─────────────────────────────────────────────────────────────
-
-        function switchToMarkMode() {
-            document.getElementById('containerAttendanceList').classList.add('hidden');
-            document.getElementById('containerMarkAttendance').classList.remove('hidden');
-            document.getElementById('btnGroupList').classList.add('hidden');
-            document.getElementById('btnGroupMark').classList.remove('hidden');
-            document.getElementById('attendanceTableTitle').textContent = 'Mark Attendance';
-            lucide.createIcons();
-        }
-
-        function switchToListMode() {
-            document.getElementById('containerMarkAttendance').classList.add('hidden');
-            document.getElementById('containerAttendanceList').classList.remove('hidden');
-            document.getElementById('btnGroupMark').classList.add('hidden');
-            document.getElementById('btnGroupList').classList.remove('hidden');
-            document.getElementById('attendanceTableTitle').textContent = 'Attendance List';
-            lucide.createIcons();
-        }
-
-        // ── Modal mark ────────────────────────────────────────────────────────────────
-
-        function openMarkModal(memberId, memberName) {
-            // Simpan member yang sedang di-mark
-            currentMemberId = memberId;
-            selectedStatus = null;
-
-            // Isi nama member di modal
-            document.getElementById('markMemberId').value = memberId;
-            document.getElementById('markModalMemberName').textContent = memberName;
-            document.getElementById('markNote').value = '';
-            document.getElementById('error-status').classList.add('hidden');
-
-            // Reset semua border status ke default
-            allStatuses.forEach(function(s) {
-                document.getElementById('status-' + s).classList.remove('border-green-400', 'border-yellow-400', 'border-blue-400', 'border-red-400');
-                document.getElementById('status-' + s).classList.add('border-[#DEE1E6]');
-            });
-
-            // Jika member sudah pernah di-mark sebelumnya, tampilkan draft-nya
-            if (draft[memberId]) {
-                selectStatus(draft[memberId].status);
-                document.getElementById('markNote').value = draft[memberId].note;
-            }
-
-            // Tampilkan modal
-            document.getElementById('markModal').classList.remove('hidden');
-            document.getElementById('markModal').classList.add('flex');
-        }
-
-        function closeMarkModal() {
-            document.getElementById('markModal').classList.add('hidden');
-            document.getElementById('markModal').classList.remove('flex');
-            currentMemberId = null;
-            selectedStatus = null;
-        }
-
-        // ── Pilih status di modal ─────────────────────────────────────────────────────
-
-        function selectStatus(status) {
-            selectedStatus = status;
-
-            // Reset semua border dulu
-            allStatuses.forEach(function(s) {
-                document.getElementById('status-' + s).classList.remove('border-green-400', 'border-yellow-400', 'border-blue-400', 'border-red-400');
-                document.getElementById('status-' + s).classList.add('border-[#DEE1E6]');
-            });
-
-            // Highlight status yang dipilih
-            document.getElementById('status-' + status).classList.remove('border-[#DEE1E6]');
-            document.getElementById('status-' + status).classList.add(statusBorderMap[status]);
-            document.getElementById('error-status').classList.add('hidden');
-        }
-
-        // ── Confirm mark → simpan ke draft → update badge di baris ───────────────────
-
-        function confirmMark() {
-            // Wajib pilih status
-            if (!selectedStatus) {
-                document.getElementById('error-status').classList.remove('hidden');
-                return;
-            }
-
-            var note = document.getElementById('markNote').value.trim();
-
-            // Simpan ke draft object
-            draft[currentMemberId] = { status: selectedStatus, note: note };
-
-            // Update badge status di baris tabel
-            var cfg = badgeConfig[selectedStatus];
-            var badgeEl = document.getElementById('status-badge-' + currentMemberId);
-            badgeEl.className = 'inline-flex items-center gap-1.5 px-2.5 py-[3px] rounded-full text-[10px] font-medium ' + cfg.bg + ' ' + cfg.text;
-            badgeEl.innerHTML = '<span class="w-1.5 h-1.5 rounded-full ' + cfg.dot + ' shrink-0"></span>' + cfg.label;
-
-            // Update note di baris tabel
-            var noteEl = document.getElementById('note-display-' + currentMemberId);
-            noteEl.textContent = note || '...';
-
-            closeMarkModal();
-        }
-
-        // ── Submit draft ke controller ────────────────────────────────────────────────
-
-        function submitAttendance(sessionId, classId) {
-            console.log('draft:', draft);
-            // Buat FormData — bisa dibaca $_POST biasa di PHP
-            var formData = new FormData();
-
-            // Kirim session_id dan class_id
-            formData.append('session_id', sessionId);
-            formData.append('class_id', classId);
-
-            // Kirim draft sebagai JSON string — di PHP di-decode dengan json_decode()
-            formData.append('draft', JSON.stringify(draft));
-
-            // Kirim ke controller pakai fetch
-            fetch('../controllers/AttendanceController.php', {
-                method: 'POST',
-                body: formData
-            })
-            .then(function(response) {
-                // Arahkan ke halaman yang sama setelah berhasil
-                window.location.reload();
-            });
-        }
     </script>
 </body>
 </html>
