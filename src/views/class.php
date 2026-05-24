@@ -161,7 +161,7 @@ $total             = mysqli_num_rows($user_class_result);
                             </select>
 
                             <button type="submit"
-                                class="flex items-center gap-2 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
+                                class="flex cursor-pointer items-center gap-2 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
                                 <i data-lucide="search" class="w-4 h-4"></i>
                                 Search
                             </button>
@@ -175,7 +175,7 @@ $total             = mysqli_num_rows($user_class_result);
                             <?php endif; ?>
                         </form>
 
-                        <button class="flex items-center gap-2 px-5 py-2 bg-[#93C5FD] text-white rounded-xl text-sm font-medium hover:bg-blue-400 transition-all shadow-sm">
+                        <button class="flex cursor-pointer items-center gap-2 px-5 py-2 bg-[#93C5FD] text-white rounded-xl text-sm font-medium hover:bg-blue-400 transition-all shadow-sm">
                             <i data-lucide="plus" class="w-4 h-4"></i>
                             New Class
                         </button>
@@ -283,10 +283,8 @@ $total             = mysqli_num_rows($user_class_result);
                             </div>
 
                         </div>
-
-                        <?php endwhile; ?>
-
                     </a>
+                    <?php endwhile; ?>
 
                     <!-- Empty State -->
                     <?php if ($total === 0): ?>

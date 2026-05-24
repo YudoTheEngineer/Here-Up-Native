@@ -39,8 +39,10 @@ $class_mode_query = "SELECT * FROM `class` WHERE id = '$class_id' LIMIT 1";
 $class = mysqli_fetch_assoc(mysqli_query($connection, $class_mode_query));
 $member_query = "SELECT * FROM member WHERE class_id = $class_id";
 $member_result = mysqli_query($connection, $member_query);
+$member_total = mysqli_num_rows($member_result);
 $session_query = "SELECT * FROM session WHERE class_id = $class_id";
 $session_result = mysqli_query($connection, $session_query);
+$session_total = mysqli_num_rows($session_result);
 ?>
 
 <!DOCTYPE html>
@@ -165,17 +167,17 @@ $session_result = mysqli_query($connection, $session_query);
                     <!-- Right: Action Buttons -->
                     <div class="flex items-center gap-3 flex-wrap">
                         <button onclick="openCreateSessionModal()"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-[#93C5FD] text-white rounded-xl text-sm font-medium hover:bg-blue-400 transition-all shadow-sm">
+                            class="inline-flex cursor-pointer items-center gap-1.5 px-4 py-2 bg-[#93C5FD] text-white rounded-xl text-sm font-medium hover:bg-blue-400 transition-all shadow-sm">
                             <i data-lucide="play-circle" class="w-4 h-4"></i>
                             Create Session
                         </button>
                         <button id="btnToggleView" onclick="toggleView()"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
+                            class="inline-flex cursor-pointer items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
                             <i id="btnToggleIcon" data-lucide="history" class="w-4 h-4"></i>
                             <span id="btnToggleLabel">See All Session</span>
                         </button>
                         <button onclick="openAddMemberModal()"
-                            class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
+                            class="inline-flex cursor-pointer items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
                             <i data-lucide="user-plus" class="w-4 h-4"></i>
                             Add Member
                         </button>
@@ -187,15 +189,27 @@ $session_result = mysqli_query($connection, $session_query);
             <div class="bg-white rounded-[2rem] p-8 shadow-sm">
                 <h2 id="tableTitle" class="text-xs font-medium text-gray-400 uppercase tracking-widest mb-6">All Your Member Class</h2>
 
+                <!-- Table: Members -->
                 <div id="containerTableMember" class="overflow-x-auto">
+                    <?php if ($member_total === 0): ?>
+
+                    <!-- Empty state: no members -->
+                    <div class="flex flex-col items-center justify-center py-16 text-center">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-3">
+                            <i data-lucide="users" class="w-7 h-7 text-gray-300"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-300">No members yet</p>
+                        <p class="text-xs text-gray-300 mt-1 mb-4">Add members to start tracking attendance</p>
+                    </div>
+
+                    <?php else: ?>
+
                     <table class="w-full text-sm border-collapse min-w-[750px]">
                         <thead>
                             <tr class="border-b border-gray-100">
                                 <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 w-[5%]">No</th>
                                 <th class="text-left text-xs font-medium text-gray-400 tracking-wide pb-3 pl-3 w-[20%]">Fullname</th>
-                                
                                 <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[8%]">Gender</th>
-                                
                                 <th class="text-center text-xs font-medium text-gray-400 tracking-wide pb-3 w-[10%]">
                                     <span class="inline-flex items-center gap-1 justify-center">
                                         <i data-lucide="check-circle-2" class="w-3.5 h-3.5 text-green-400"></i>
@@ -225,11 +239,11 @@ $session_result = mysqli_query($connection, $session_query);
                         </thead>
                         <tbody>
                             <?php
-                                $row = 1;
+                                $row_num = 1;
                                 while($member = mysqli_fetch_assoc($member_result)):
                             ?>
                             <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
-                                <td class="py-4 text-xs text-gray-400"><?= $row++; ?></td>
+                                <td class="py-4 text-xs text-gray-400"><?= $row_num++; ?></td>
                                 <td class="py-4 pl-3">
                                     <span class="inline-flex items-center gap-1.5 text-xs text-gray-500">
                                         <div class="w-[22px] h-[22px] rounded-full overflow-hidden flex-shrink-0">
@@ -240,7 +254,6 @@ $session_result = mysqli_query($connection, $session_query);
                                         <?= htmlspecialchars($member["fullname"]); ?>
                                     </span>
                                 </td>
-
                                 <td class="py-4 text-center">
                                     <?php if ($member['gender'] == 1 || strtolower($member['gender']) == 'male'): ?>
                                         <span class="inline-flex items-center justify-center w-7 h-7 rounded-full bg-blue-50" title="Male">
@@ -254,7 +267,6 @@ $session_result = mysqli_query($connection, $session_query);
                                         <span class="text-gray-300 text-xs">-</span>
                                     <?php endif; ?>
                                 </td>
-
                                 <td class="py-4 text-center">
                                     <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-green-50 text-green-600">
                                         <i data-lucide="check-circle-2" class="w-3 h-3"></i>
@@ -280,13 +292,11 @@ $session_result = mysqli_query($connection, $session_query);
                                     </span>
                                 </td>
                                 <td class="py-4 text-right">
-                                    <div class="flex flex-col items-end line-height-1.2">
-                                        <!-- Baris Atas: Tanggal -->
+                                    <div class="flex flex-col items-end">
                                         <span class="inline-flex items-center gap-1 text-xs font-medium text-gray-700">
                                             <i data-lucide="calendar" class="w-3 h-3 text-gray-400"></i>
                                             <?= date("d F Y", strtotime($member["created_at"])) ?>
                                         </span>
-                                        <!-- Baris Bawah: Jam & Zona Waktu -->
                                         <span class="text-[11px] text-gray-400 mt-0.5 font-mono">
                                             <?= date("H:i", strtotime($member["created_at"])) ?> UTC
                                         </span>
@@ -294,31 +304,40 @@ $session_result = mysqli_query($connection, $session_query);
                                 </td>
                             </tr>
                             <?php endwhile; ?>
-                        </table>
-                    </tbody>
+                        </tbody>
+                    </table>
+
+                    <?php endif; ?>
                 </div>
-                
+
+                <!-- Table: Sessions -->
                 <div id="containerTableSession" class="flex flex-col gap-3 hidden">
-                    <?php
-                        if (isset($session_result) && mysqli_num_rows($session_result) > 0):
-                            while($session = mysqli_fetch_assoc($session_result)):
-                    ?>
+                    <?php if ($session_total === 0): ?>
+
+                    <!-- Empty state: no sessions -->
+                    <div class="flex flex-col items-center justify-center py-16 text-center">
+                        <div class="w-14 h-14 rounded-2xl flex items-center justify-center mb-3">
+                            <i data-lucide="play-circle" class="w-7 h-7 text-gray-300"></i>
+                        </div>
+                        <p class="text-sm font-semibold text-gray-300">No sessions yet</p>
+                        <p class="text-xs text-gray-300 mt-1 mb-4">Create a session to start taking attendance</p>
+                    </div>
+
+                    <?php else: ?>
+
+                    <?php while($session = mysqli_fetch_assoc($session_result)): ?>
                     <a href="session.php?class_id=<?= htmlspecialchars($class_id)?>&session_id=<?= htmlspecialchars($session["id"])?>">
                         <div class="border border-gray-100 rounded-2xl p-5 hover:border-gray-200 transition-all cursor-pointer flex flex-col">
                             <!-- Card Header -->
                             <div class="flex items-start gap-3 mb-3">
-                                <!-- Icon Box -->
                                 <div class="w-9 h-9 rounded-xl bg-blue-50 flex items-center justify-center flex-shrink-0">
                                     <i data-lucide="book-open" class="w-4 h-4 text-blue-400"></i>
                                 </div>
-
-                                <!-- Name + Description -->
                                 <div class="flex-1 min-w-0">
                                     <div class="flex items-center justify-between gap-2">
                                         <span class="text-[13px] font-semibold text-gray-700 truncate">
                                             <?= htmlspecialchars($session["name"]); ?>
                                         </span>
-
                                         <?php if ($session["is_active"] == '1'): ?>
                                         <span class="inline-flex items-center gap-1.5 px-2 py-[3px] rounded-full text-[10px] font-medium bg-green-50 text-green-600 flex-shrink-0">
                                             <span class="w-1.5 h-1.5 rounded-full bg-green-500 animate-pulse"></span>
@@ -331,7 +350,6 @@ $session_result = mysqli_query($connection, $session_query);
                                         </span>
                                         <?php endif; ?>
                                     </div>
-
                                     <?php if (!empty($session["description"])): ?>
                                     <p class="text-[12px] text-gray-400 mt-1 leading-relaxed line-clamp-2">
                                         <?= htmlspecialchars($session["description"]); ?>
@@ -345,7 +363,6 @@ $session_result = mysqli_query($connection, $session_query);
                                 </div>
                             </div>
 
-                            <!-- Divider -->
                             <div class="border-t border-gray-50 my-0"></div>
 
                             <!-- Footer: Date & Timezone -->
@@ -378,33 +395,21 @@ $session_result = mysqli_query($connection, $session_query);
                                     <?= date("H:i", strtotime($session["end_time"])); ?>
                                 </span>
                             </div>
+                        </div>
+                    </a>
+                    <?php endwhile; ?>
 
-                        </div>
-                        <?php 
-                                endwhile;
-                            else: 
-                        ?>
-                        <div class="py-12 flex flex-col items-center justify-center gap-2 text-gray-400">
-                            <i data-lucide="folder-open" class="w-8 h-8 text-gray-300"></i>
-                            <span class="text-xs italic font-medium">No sessions created yet for this class.</span>
-                        </div>
-                        <?php endif; ?>
-                    </div>
-                        </a>
+                    <?php endif; ?>
                 </div>
+
+            </div>
         </main>
     </div>
 
     <!-- ── Modal: Add Member ────────────────────────────────────────────────── -->
     <div id="addMemberModal" class="fixed inset-0 hidden items-center justify-center z-50">
-
-        <!-- Overlay -->
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="closeAddMemberModal()"></div>
-
-        <!-- Modal Box -->
         <div class="relative bg-white w-[500px] max-h-[90vh] overflow-y-auto rounded-2xl border border-[#DEE1E6] p-6 z-10">
-
-            <!-- Header -->
             <div class="flex items-center gap-3 mb-4">
                 <img class="h-[30px]" src="../../public/images/icon.png" alt="Icon">
                 <h1 class="text-xl text-[#87CEEB] font-bold">Add Member</h1>
@@ -413,34 +418,25 @@ $session_result = mysqli_query($connection, $session_query);
 
             <form id="formAddMember" action="../controllers/MemberClassController.php" method="POST" enctype="multipart/form-data" class="space-y-4">
 
-                <!-- Fullname -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-1">Full Name</label>
                     <div class="relative">
-                        <input
-                            type="text"
-                            id="fullname"
-                            name="fullname"
-                            placeholder="Enter member's fullname"
-                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm"
-                        >
+                        <input type="text" id="fullname" name="fullname" placeholder="Enter member's fullname"
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm">
                         <i data-lucide="user" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
                     <p id="error-fullname" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
 
-                <!-- Gender -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-2">Gender</label>
                     <div class="flex gap-3">
-                        <label id="gender-male-label"
-                            onclick="selectGender(1)"
+                        <label id="gender-male-label" onclick="selectGender(1)"
                             class="flex-1 flex items-center gap-2.5 px-4 py-2.5 border-2 border-[#DEE1E6] rounded-xl cursor-pointer transition-all hover:border-[#93C5FD]">
                             <i data-lucide="mars" class="w-4 h-4 text-blue-400"></i>
                             <span class="text-sm text-[#565D6D]">Male</span>
                         </label>
-                        <label id="gender-female-label"
-                            onclick="selectGender(2)"
+                        <label id="gender-female-label" onclick="selectGender(2)"
                             class="flex-1 flex items-center gap-2.5 px-4 py-2.5 border-2 border-[#DEE1E6] rounded-xl cursor-pointer transition-all hover:border-[#93C5FD]">
                             <i data-lucide="venus" class="w-4 h-4 text-pink-400"></i>
                             <span class="text-sm text-[#565D6D]">Female</span>
@@ -450,34 +446,23 @@ $session_result = mysqli_query($connection, $session_query);
                     <p id="error-gender" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
 
-                <!-- Profile Photo -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-2">Profile Photo</label>
-
-                    <!-- Tab Toggle -->
                     <div class="flex gap-2 mb-3">
                         <button type="button" onclick="switchPhotoTab('default')" id="tab-default"
-                            class="text-xs px-3 py-1.5 rounded-lg bg-[#93C5FD] text-white transition-all">
-                            Default Photo
-                        </button>
+                            class="text-xs px-3 py-1.5 rounded-lg bg-[#93C5FD] text-white transition-all">Default Photo</button>
                         <button type="button" onclick="switchPhotoTab('upload')" id="tab-upload"
-                            class="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all">
-                            Upload Photo
-                        </button>
+                            class="text-xs px-3 py-1.5 rounded-lg bg-gray-100 text-gray-500 hover:bg-gray-200 transition-all">Upload Photo</button>
                     </div>
 
-                    <!-- Panel: Default Photos -->
                     <div id="panel-default">
                         <div class="w-full border border-[#DEE1E6] rounded-lg p-3 bg-[#FAFAFA]">
                             <p class="text-[11px] text-gray-400 mb-2">Pick one of the default photos</p>
                             <div class="grid grid-cols-5 gap-2" id="default-photo-grid">
                                 <?php for ($i = 1; $i <= 20; $i++): ?>
-                                <div onclick="selectDefaultPhoto(<?= $i ?>)"
-                                    id="default-opt-<?= $i ?>"
+                                <div onclick="selectDefaultPhoto(<?= $i ?>)" id="default-opt-<?= $i ?>"
                                     class="w-full aspect-square rounded-lg overflow-hidden cursor-pointer border-2 border-transparent hover:border-[#93C5FD] transition-all">
-                                    <img src="../../storage/profile_picture/default-profile-<?= $i ?>.svg"
-                                        alt="Default <?= $i ?>"
-                                        class="w-full h-full object-cover">
+                                    <img src="../../storage/profile_picture/default-profile-<?= $i ?>.svg" alt="Default <?= $i ?>" class="w-full h-full object-cover">
                                 </div>
                                 <?php endfor; ?>
                             </div>
@@ -485,46 +470,33 @@ $session_result = mysqli_query($connection, $session_query);
                         <input type="hidden" name="default_profile_picture" id="default_photo" value="default-profile-1.svg">
                     </div>
 
-                    <!-- Panel: Upload -->
                     <div id="panel-upload" class="hidden">
                         <div class="w-full border border-[#DEE1E6] rounded-lg p-4 flex items-center gap-4 bg-[#FAFAFA]">
-
-                            <!-- Thumbnail Preview -->
                             <div class="w-14 h-14 rounded-xl bg-gray-100 overflow-hidden flex items-center justify-center flex-shrink-0">
                                 <i data-lucide="image" class="w-6 h-6 text-gray-300" id="photo-placeholder-icon"></i>
                                 <img id="picture-preview" class="hidden w-full h-full object-cover" src="" alt="Preview">
                             </div>
-
-                            <!-- Text + Button -->
                             <div class="flex-1 min-w-0">
                                 <p class="text-xs text-[#565D6D] font-medium mb-0.5" id="picture-filename">No file chosen</p>
                                 <p class="text-[11px] text-gray-400">JPG, PNG, WEBP — max 2MB</p>
                             </div>
-
-                            <!-- Trigger Button -->
                             <button type="button" onclick="document.getElementById('profile_picture').click()"
                                 class="flex-shrink-0 flex items-center gap-1.5 px-3 py-1.5 bg-white border border-[#DEE1E6] rounded-lg text-xs text-[#565D6D] hover:bg-gray-50 transition-all">
                                 <i data-lucide="upload" class="w-3.5 h-3.5"></i>
                                 Browse
                             </button>
                         </div>
-                        <input type="file" name="profile_picture" id="profile_picture" accept="image/*" class="hidden"
-                            onchange="previewPhoto(event)">
+                        <input type="file" name="profile_picture" id="profile_picture" accept="image/*" class="hidden" onchange="previewPhoto(event)">
                     </div>
                 </div>
 
-                <!-- Buttons -->
                 <div class="flex gap-3 mt-5">
-                    <button
-                        type="button"
-                        onclick="handleAddMember()"
-                        class="flex-1 py-3 bg-gradient-to-r from-[#7B61FF] via-[#3BC5BA] to-[#5D87E8] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-all">
+                    <button type="button" onclick="handleAddMember()"
+                        class="flex-1 py-3 cursor-pointer bg-gradient-to-r from-[#7C58DF] via-[#22CCB2] to-[#626BE8] hover:opacity-90 transition-opacity duration-200 text-white rounded-xl text-sm font-medium">
                         Add Member
                     </button>
-                    <button
-                        type="button"
-                        onclick="closeAddMemberModal()"
-                        class="flex-1 py-3 border border-[#DEE1E6] rounded-xl text-sm text-[#565D6D] hover:bg-gray-50 transition-all">
+                    <button type="button" onclick="closeAddMemberModal()"
+                        class="flex-1 py-3 cursor-pointer border border-[#DEE1E6] rounded-xl text-sm text-[#565D6D] hover:bg-gray-50 transition-all">
                         Cancel
                     </button>
                 </div>
@@ -533,15 +505,10 @@ $session_result = mysqli_query($connection, $session_query);
         </div>
     </div>
 
+    <!-- ── Modal: Create Session ──────────────────────────────────────────── -->
     <div id="createSessionModal" class="fixed inset-0 hidden items-center justify-center z-50">
-
-        <!-- Overlay -->
         <div class="absolute inset-0 bg-black/30 backdrop-blur-sm" onclick="closeCreateSessionModal()"></div>
-
-        <!-- Modal Box -->
         <div class="relative bg-white w-[500px] max-h-[90vh] overflow-y-auto rounded-2xl border border-[#DEE1E6] p-6 z-10">
-
-            <!-- Header -->
             <div class="flex items-center gap-3 mb-4">
                 <img class="h-[30px]" src="../../public/images/icon.png" alt="Icon">
                 <h1 class="text-xl text-[#87CEEB] font-bold">Create Session</h1>
@@ -550,144 +517,86 @@ $session_result = mysqli_query($connection, $session_query);
 
             <form id="formCreateSession" action="../controllers/SessionController.php" method="POST" class="space-y-4">
 
-                <!-- Session Name -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-1">Session Name</label>
                     <div class="relative">
-                        <input
-                            type="text"
-                            id="session_name"
-                            name="name"
-                            placeholder="e.g. attendance 1"
-                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm"
-                        >
+                        <input type="text" id="session_name" name="name" placeholder="e.g. attendance 1"
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm">
                         <i data-lucide="bookmark" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
                     <p id="error-session_name" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
 
-                <!-- Description -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-1">
                         Description <span class="text-gray-300">(optional)</span>
                     </label>
                     <div class="relative">
-                        <textarea
-                            id="session_description"
-                            name="description"
-                            placeholder="e.g. today's activity is about..."
-                            rows="3"
-                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm resize-none"
-                        ></textarea>
+                        <textarea id="session_description" name="description" placeholder="e.g. today's activity is about..." rows="3"
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm resize-none"></textarea>
                         <i data-lucide="file-text" class="w-4 h-4 absolute left-3 top-3 text-gray-400"></i>
                     </div>
                 </div>
 
-                <!-- Start Time -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-1">Start Time</label>
                     <div class="relative">
-                        <input
-                            type="text"
-                            id="start_time"
-                            name="start_time"
-                            placeholder="select start date and time"
-                            readonly
-                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm cursor-pointer bg-white"
-                        >
+                        <input type="text" id="start_time" name="start_time" placeholder="select start date and time" readonly
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm cursor-pointer bg-white">
                         <i data-lucide="clock" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
                     <p id="error-start_time" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
 
-                <!-- End Time -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-1">End Time</label>
                     <div class="relative">
-                        <input
-                            type="text"
-                            id="end_time"
-                            name="end_time"
-                            placeholder="select end date and time"
-                            readonly
-                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm cursor-pointer bg-white"
-                        >
+                        <input type="text" id="end_time" name="end_time" placeholder="select end date and time" readonly
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm cursor-pointer bg-white">
                         <i data-lucide="clock-4" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400"></i>
                     </div>
                     <p id="error-end_time" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
 
-                <!-- Timezone -->
                 <div>
                     <label class="text-sm text-[#565D6D] block mb-1">Timezone</label>
                     <div class="relative">
-                        <select
-                            id="timezone"
-                            name="timezone"
-                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm bg-white appearance-none"
-                        >
+                        <select id="timezone" name="timezone"
+                            class="w-full border border-[#DEE1E6] rounded py-2 pl-10 pr-3 focus:outline-none focus:ring-1 focus:ring-[#87CEEB] text-sm bg-white appearance-none">
                             <option value="" disabled>Select timezone</option>
-
-                            <!-- UTC 0 -->
                             <option value="UTC" selected>UTC+0 — UTC</option>
                             <option value="Europe/London">UTC+0 — London</option>
                             <option value="Africa/Accra">UTC+0 — Accra</option>
-
-                            <!-- UTC+1 -->
                             <option value="Europe/Paris">UTC+1 — Paris</option>
                             <option value="Europe/Berlin">UTC+1 — Berlin</option>
                             <option value="Europe/Rome">UTC+1 — Rome</option>
                             <option value="Africa/Lagos">UTC+1 — Lagos</option>
-
-                            <!-- UTC+2 -->
                             <option value="Europe/Athens">UTC+2 — Athens</option>
                             <option value="Europe/Helsinki">UTC+2 — Helsinki</option>
                             <option value="Africa/Cairo">UTC+2 — Cairo</option>
                             <option value="Africa/Johannesburg">UTC+2 — Johannesburg</option>
-
-                            <!-- UTC+3 -->
                             <option value="Europe/Moscow">UTC+3 — Moscow</option>
                             <option value="Asia/Riyadh">UTC+3 — Riyadh</option>
                             <option value="Africa/Nairobi">UTC+3 — Nairobi</option>
                             <option value="Asia/Baghdad">UTC+3 — Baghdad</option>
-
-                            <!-- UTC+3:30 -->
                             <option value="Asia/Tehran">UTC+3:30 — Tehran</option>
-
-                            <!-- UTC+4 -->
                             <option value="Asia/Dubai">UTC+4 — Dubai</option>
                             <option value="Asia/Baku">UTC+4 — Baku</option>
                             <option value="Indian/Mauritius">UTC+4 — Mauritius</option>
-
-                            <!-- UTC+4:30 -->
                             <option value="Asia/Kabul">UTC+4:30 — Kabul</option>
-
-                            <!-- UTC+5 -->
                             <option value="Asia/Karachi">UTC+5 — Karachi</option>
                             <option value="Asia/Tashkent">UTC+5 — Tashkent</option>
-
-                            <!-- UTC+5:30 -->
                             <option value="Asia/Kolkata">UTC+5:30 — Kolkata / Mumbai</option>
                             <option value="Asia/Colombo">UTC+5:30 — Colombo</option>
-
-                            <!-- UTC+5:45 -->
                             <option value="Asia/Kathmandu">UTC+5:45 — Kathmandu</option>
-
-                            <!-- UTC+6 -->
                             <option value="Asia/Dhaka">UTC+6 — Dhaka</option>
                             <option value="Asia/Almaty">UTC+6 — Almaty</option>
-
-                            <!-- UTC+6:30 -->
                             <option value="Asia/Yangon">UTC+6:30 — Yangon</option>
                             <option value="Indian/Cocos">UTC+6:30 — Cocos Islands</option>
-
-                            <!-- UTC+7 -->
                             <option value="Asia/Jakarta">UTC+7 — Jakarta (WIB)</option>
                             <option value="Asia/Bangkok">UTC+7 — Bangkok</option>
                             <option value="Asia/Ho_Chi_Minh">UTC+7 — Ho Chi Minh</option>
                             <option value="Asia/Phnom_Penh">UTC+7 — Phnom Penh</option>
-
-                            <!-- UTC+8 -->
                             <option value="Asia/Makassar">UTC+8 — Makassar (WITA)</option>
                             <option value="Asia/Singapore">UTC+8 — Singapore</option>
                             <option value="Asia/Kuala_Lumpur">UTC+8 — Kuala Lumpur</option>
@@ -696,102 +605,55 @@ $session_result = mysqli_query($connection, $session_query);
                             <option value="Asia/Taipei">UTC+8 — Taipei</option>
                             <option value="Asia/Manila">UTC+8 — Manila</option>
                             <option value="Australia/Perth">UTC+8 — Perth</option>
-
-                            <!-- UTC+8:45 -->
                             <option value="Australia/Eucla">UTC+8:45 — Eucla</option>
-
-                            <!-- UTC+9 -->
                             <option value="Asia/Jayapura">UTC+9 — Jayapura (WIT)</option>
                             <option value="Asia/Tokyo">UTC+9 — Tokyo</option>
                             <option value="Asia/Seoul">UTC+9 — Seoul</option>
                             <option value="Pacific/Palau">UTC+9 — Palau</option>
-
-                            <!-- UTC+9:30 -->
                             <option value="Australia/Darwin">UTC+9:30 — Darwin</option>
                             <option value="Australia/Adelaide">UTC+9:30 — Adelaide</option>
-
-                            <!-- UTC+10 -->
                             <option value="Australia/Sydney">UTC+10 — Sydney</option>
                             <option value="Australia/Brisbane">UTC+10 — Brisbane</option>
                             <option value="Pacific/Port_Moresby">UTC+10 — Port Moresby</option>
                             <option value="Pacific/Guam">UTC+10 — Guam</option>
-
-                            <!-- UTC+10:30 -->
                             <option value="Australia/Lord_Howe">UTC+10:30 — Lord Howe Island</option>
-
-                            <!-- UTC+11 -->
                             <option value="Pacific/Noumea">UTC+11 — Noumea</option>
                             <option value="Pacific/Guadalcanal">UTC+11 — Guadalcanal</option>
-
-                            <!-- UTC+12 -->
                             <option value="Pacific/Auckland">UTC+12 — Auckland</option>
                             <option value="Pacific/Fiji">UTC+12 — Fiji</option>
                             <option value="Pacific/Majuro">UTC+12 — Marshall Islands</option>
-
-                            <!-- UTC+12:45 -->
                             <option value="Pacific/Chatham">UTC+12:45 — Chatham Islands</option>
-
-                            <!-- UTC+13 -->
                             <option value="Pacific/Tongatapu">UTC+13 — Tonga</option>
                             <option value="Pacific/Apia">UTC+13 — Samoa</option>
-
-                            <!-- UTC+14 -->
                             <option value="Pacific/Kiritimati">UTC+14 — Kiritimati</option>
-
-                            <!-- UTC-1 -->
                             <option value="Atlantic/Azores">UTC-1 — Azores</option>
                             <option value="Atlantic/Cape_Verde">UTC-1 — Cape Verde</option>
-
-                            <!-- UTC-2 -->
                             <option value="America/Noronha">UTC-2 — Fernando de Noronha</option>
                             <option value="Atlantic/South_Georgia">UTC-2 — South Georgia</option>
-
-                            <!-- UTC-3 -->
                             <option value="America/Sao_Paulo">UTC-3 — São Paulo</option>
                             <option value="America/Buenos_Aires">UTC-3 — Buenos Aires</option>
                             <option value="America/Santiago">UTC-3 — Santiago</option>
-
-                            <!-- UTC-3:30 -->
                             <option value="America/St_Johns">UTC-3:30 — St. John's (NST)</option>
-
-                            <!-- UTC-4 -->
                             <option value="America/Halifax">UTC-4 — Halifax (AST)</option>
                             <option value="America/La_Paz">UTC-4 — La Paz</option>
                             <option value="America/Caracas">UTC-4 — Caracas</option>
                             <option value="America/Manaus">UTC-4 — Manaus</option>
-
-                            <!-- UTC-5 -->
                             <option value="America/New_York">UTC-5 — New York (EST)</option>
                             <option value="America/Toronto">UTC-5 — Toronto</option>
                             <option value="America/Bogota">UTC-5 — Bogotá</option>
                             <option value="America/Lima">UTC-5 — Lima</option>
-
-                            <!-- UTC-6 -->
                             <option value="America/Chicago">UTC-6 — Chicago (CST)</option>
                             <option value="America/Mexico_City">UTC-6 — Mexico City</option>
-
-                            <!-- UTC-7 -->
                             <option value="America/Denver">UTC-7 — Denver (MST)</option>
                             <option value="America/Phoenix">UTC-7 — Phoenix</option>
-
-                            <!-- UTC-8 -->
                             <option value="America/Los_Angeles">UTC-8 — Los Angeles (PST)</option>
                             <option value="America/Vancouver">UTC-8 — Vancouver</option>
-                            <option value="America/Anchorage">UTC-8 — Anchorage</option>
-
-                            <!-- UTC-9 -->
                             <option value="America/Anchorage">UTC-9 — Alaska</option>
                             <option value="Pacific/Gambier">UTC-9 — Gambier Islands</option>
-
-                            <!-- UTC-10 -->
                             <option value="Pacific/Honolulu">UTC-10 — Honolulu (HST)</option>
                             <option value="Pacific/Tahiti">UTC-10 — Tahiti</option>
-
-                            <!-- UTC-11 -->
                             <option value="Pacific/Niue">UTC-11 — Niue</option>
                             <option value="Pacific/Pago_Pago">UTC-11 — Pago Pago</option>
-
-                            <!-- UTC-12 -->
                             <option value="Etc/GMT+12">UTC-12 — Baker Island</option>
                         </select>
                         <i data-lucide="globe" class="w-4 h-4 absolute left-3 top-1/2 -translate-y-1/2 text-gray-400 pointer-events-none"></i>
@@ -800,18 +662,13 @@ $session_result = mysqli_query($connection, $session_query);
                     <p id="error-timezone" class="hidden text-xs text-red-400 mt-1"></p>
                 </div>
 
-                <!-- Buttons -->
                 <div class="flex gap-3 mt-5">
-                    <button
-                        type="button"
-                        onclick="handleCreateSession()"
-                        class="flex-1 py-3 bg-gradient-to-r from-[#7B61FF] via-[#3BC5BA] to-[#5D87E8] text-white rounded-xl text-sm font-medium hover:opacity-90 transition-all">
+                    <button type="button" onclick="handleCreateSession()"
+                        class="flex-1 py-3 cursor-pointer bg-gradient-to-r from-[#7C58DF] via-[#22CCB2] to-[#626BE8] hover:opacity-90 transition-opacity duration-200 text-white rounded-xl text-sm font-medium">
                         Create Session
                     </button>
-                    <button
-                        type="button"
-                        onclick="closeCreateSessionModal()"
-                        class="flex-1 py-3 border border-[#DEE1E6] rounded-xl text-sm text-[#565D6D] hover:bg-gray-50 transition-all">
+                    <button type="button" onclick="closeCreateSessionModal()"
+                        class="flex-1 cursor-pointer py-3 border border-[#DEE1E6] rounded-xl text-sm text-[#565D6D] hover:bg-gray-50 transition-all">
                         Cancel
                     </button>
                 </div>
@@ -833,16 +690,11 @@ $session_result = mysqli_query($connection, $session_query);
             const btnIcon      = document.getElementById("btnToggleIcon");
             const tableTitle   = document.getElementById("tableTitle");
 
-            console.log("toggle clicked", { tableMember, tableSession, btnLabel, btnIcon });
+            if (!tableMember || !tableSession || !btnLabel || !btnIcon || !tableTitle) return;
 
-            if (!tableMember || !tableSession || !btnLabel || !btnIcon || !tableTitle) {
-                console.warn("Elemen tidak ditemukan!");
-                return;
-            }
+            const isShowingMember = !tableMember.classList.contains("hidden");
 
-            const isSession = !tableMember.classList.contains("hidden");
-
-            if (isSession) {
+            if (isShowingMember) {
                 tableMember.classList.add("hidden");
                 tableSession.classList.remove("hidden");
                 btnLabel.textContent = "See All Members";

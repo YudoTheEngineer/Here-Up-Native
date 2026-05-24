@@ -384,8 +384,8 @@ $user_id = $_SESSION["session"]["id"];
                 <p id="error-class_profile_picture" class="hidden text-sm text-red-400"></p>
 
                 <div class="flex gap-3 mt-5">
-                    <button type="submit" class="flex-1 py-3 bg-gradient-to-r from-[#7B61FF] via-[#3BC5BA] to-[#5D87E8] text-white rounded-xl">Create</button>
-                    <button type="button" onclick="closeModal()" class="flex-1 py-3 border border-[#DEE1E6] rounded-xl">Cancel</button>
+                    <button type="submit" class="flex-1 py-3 cursor-pointer bg-gradient-to-r from-[#7C58DF] via-[#22CCB2] to-[#626BE8] hover:opacity-90 transition-opacity duration-200 text-white rounded-xl">Create</button>
+                    <button type="button" onclick="closeModal()" class="flex-1 cursor-pointer py-3 border border-[#DEE1E6] rounded-xl">Cancel</button>
                 </div>
             </form>
         </div>
@@ -411,8 +411,8 @@ $user_id = $_SESSION["session"]["id"];
                 <p id="error-invitation_code" class="hidden text-sm text-red-400"></p>
 
                 <div class="flex gap-3 mt-5">
-                    <button type="submit" class="flex-1 py-3 bg-gradient-to-r from-[#7B61FF] via-[#3BC5BA] to-[#5D87E8] text-white rounded-xl">Join</button>
-                    <button type="button" onclick="closeJoinModal()" class="flex-1 py-3 border border-[#DEE1E6] rounded-xl">Cancel</button>
+                    <button type="submit" class="flex-1 py-3 cursor-pointer bg-gradient-to-r from-[#7C58DF] via-[#22CCB2] to-[#626BE8] hover:opacity-90 transition-opacity duration-200 text-white rounded-xl">Join</button>
+                    <button type="button" onclick="closeJoinModal()" class="flex-1 cursor-pointer py-3 border border-[#DEE1E6] rounded-xl">Cancel</button>
                 </div>
             </form>
         </div>

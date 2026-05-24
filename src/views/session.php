@@ -165,7 +165,6 @@ $status_config = [
                 <input type="hidden" name="session_id" value="<?= $session_id ?>">
                 <input type="hidden" name="class_id" value="<?= $class_id ?>">
 
-                <!-- ═══ HIDDEN INPUTS CONTAINER ═══ -->
                 <div id="hidden-attendance-inputs"></div>
 
                 <div class="bg-white rounded-[2rem] p-8 shadow-sm">
@@ -232,14 +231,14 @@ $status_config = [
                         <div class="flex items-center gap-3 flex-wrap">
                             <?php if ($session["is_active"] === "1"): ?>
                             <button
-                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
+                                class="inline-flex cursor-pointer items-center gap-1.5 px-4 py-2 bg-gray-50 text-gray-600 rounded-xl text-sm font-medium hover:bg-gray-100 transition-all border border-gray-100">
                                 <i data-lucide="pencil" class="w-4 h-4"></i>
                                 Edit Session
                             </button>
 
                             <button
                                 type="submit"
-                                class="inline-flex items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-400 rounded-xl text-sm font-medium hover:bg-blue-100 transition-all border border-blue-100">
+                                class="inline-flex cursor-pointer items-center gap-1.5 px-4 py-2 bg-blue-50 text-blue-400 rounded-xl text-sm font-medium hover:bg-blue-100 transition-all border border-blue-100">
                                 <i data-lucide="send" class="w-4 h-4"></i>
                                 Submit Attendance
                             </button>
@@ -391,7 +390,7 @@ $status_config = [
                                             <button
                                                 type="button"
                                                 onclick="openMarkAttendanceModal(<?= $member_id ?>)"
-                                                class="inline-flex items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-400 rounded-xl text-xs font-medium hover:bg-blue-100 transition-all border border-blue-100">
+                                                class="inline-flex cursor-pointer items-center gap-1.5 px-3 py-1.5 bg-blue-50 text-blue-400 rounded-xl text-xs font-medium hover:bg-blue-100 transition-all border border-blue-100">
                                                 <i data-lucide="check" class="w-3.5 h-3.5"></i>
                                                 Mark
                                             </button>
