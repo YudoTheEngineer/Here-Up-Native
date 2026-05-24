@@ -1,3 +1,4 @@
 env.php
 storage/class_profile_picture
 storage/profile_picture
+test/*
