@@ -28,6 +28,12 @@ $user_id = $_SESSION["session"]["id"];
         .custom-scrollbar::-webkit-scrollbar-thumb { background: #e2e8f0; border-radius: 4px; }
         .action-card { transition: transform 0.18s, box-shadow 0.18s; }
         .action-card:hover { transform: translateY(-2px); box-shadow: 0 10px 28px rgba(0,0,0,0.07); }
+
+        /* Fixed height agar scroll muncul setelah 5 baris (~56px per baris * 5 = 280px) */
+        .table-scroll-area {
+            max-height: 280px;
+            overflow-y: auto;
+        }
     </style>
 </head>
 <body class="bg-[#F8FAFC] text-[#64748B]">
@@ -143,8 +149,9 @@ $user_id = $_SESSION["session"]["id"];
 
                     <div class="grid grid-cols-5 gap-5">
 
+                        <!-- All Your Classes -->
                         <div class="col-span-3 border border-gray-100 rounded-2xl flex flex-col overflow-hidden" style="min-height:300px;">
-                            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
                                 <div>
                                     <h2 class="text-xs font-medium text-gray-400 uppercase tracking-widest">All Your Classes</h2>
                                 </div>
@@ -153,43 +160,57 @@ $user_id = $_SESSION["session"]["id"];
                                 </a>
                             </div>
 
-                            <div class="flex-1 overflow-y-auto custom-scrollbar">
-                                <?php
-                                    $user_class_query = "SELECT * FROM user_class WHERE user_id = '$user_id'";
-                                    $user_class_result = mysqli_query($connection, $user_class_query);
-                                    
-                                    $class_row = 0;
-                                    while($user_class = mysqli_fetch_assoc($user_class_result)):
-                                        $class_row++;
+                            <?php
+                                $user_class_query = "SELECT * FROM user_class WHERE user_id = '$user_id'";
+                                $user_class_result = mysqli_query($connection, $user_class_query);
+                                $class_row = 0;
+                                $classes_data = [];
+                                while($user_class = mysqli_fetch_assoc($user_class_result)) {
+                                    $class_row++;
+                                    $class_id = $user_class['class_id'];
+                                    $class_query = "SELECT * FROM class WHERE id = '$class_id'";
+                                    $class = mysqli_fetch_assoc(mysqli_query($connection, $class_query));
+                                    $creator_id = $class['created_by'];
+                                    $creator_query = "SELECT username, profile_picture FROM user WHERE id = '$creator_id'";
+                                    $creator = mysqli_fetch_assoc(mysqli_query($connection, $creator_query));
+                                    $isAdmin = isset($user_class['role']) && $user_class['role'] == 1;
+                                    $classes_data[] = [
+                                        'row' => $class_row,
+                                        'class_id' => $class_id,
+                                        'class' => $class,
+                                        'creator' => $creator,
+                                        'isAdmin' => $isAdmin,
+                                    ];
+                                }
+                            ?>
 
-                                        $class_id = $user_class['class_id'];
-                                        $class_query = "SELECT * FROM class WHERE id = '$class_id'";
-                                        $class = mysqli_fetch_assoc(mysqli_query($connection, $class_query));
-
-                                        $creator_id = $class['created_by'];
-                                        $creator_query = "SELECT username, profile_picture FROM user WHERE id = '$creator_id'";
-                                        $creator = mysqli_fetch_assoc(mysqli_query($connection, $creator_query));
-                                        
-                                        $isAdmin = isset($user_class['role']) && $user_class['role'] == 1;
-                                ?>
-                                
-                                <a href="admin-class.php?class_id=<?= $class_id ?>" class="flex items-center gap-3 px-6 py-3.5 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 cursor-pointer block">
-                                    <span class="text-[10px] text-gray-300 w-4 shrink-0"><?= $class_row ?></span>
+                            <?php if (empty($classes_data)): ?>
+                            <!-- Empty state: centered vertically and horizontally, flex-1 to fill remaining space -->
+                            <div class="flex-1 flex flex-col items-center justify-center">
+                                <i data-lucide="folder-open" class="w-6 h-6 text-gray-200 mb-2"></i>
+                                <p class="text-[11px] text-gray-300">You haven't joined any class yet</p>
+                            </div>
+                            <?php else: ?>
+                            <!-- Scrollable area: max-height fixed, scroll after 5 rows -->
+                            <div class="table-scroll-area custom-scrollbar">
+                                <?php foreach ($classes_data as $item): ?>
+                                <a href="admin-class.php?class_id=<?= $item['class_id'] ?>" class="flex items-center gap-3 px-6 py-3.5 hover:bg-gray-50 transition-colors border-b border-gray-50 last:border-0 cursor-pointer block">
+                                    <span class="text-[10px] text-gray-300 w-4 shrink-0"><?= $item['row'] ?></span>
                                     <div class="w-8 h-8 rounded-lg overflow-hidden bg-gray-100 shrink-0">
-                                        <img src="../../storage/class_profile_picture/<?= htmlspecialchars($class['profile_picture']) ?>" alt="" class="w-full h-full object-cover">
+                                        <img src="../../storage/class_profile_picture/<?= htmlspecialchars($item['class']['profile_picture']) ?>" alt="" class="w-full h-full object-cover">
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-xs font-medium text-gray-600 truncate"><?= htmlspecialchars($class['name']) ?></p>
+                                        <p class="text-xs font-medium text-gray-600 truncate"><?= htmlspecialchars($item['class']['name']) ?></p>
                                         <div class="flex items-center gap-1 mt-0.5">
                                             <div class="w-3.5 h-3.5 rounded-full overflow-hidden bg-gray-100 shrink-0">
-                                                <img src="../../storage/profile_picture/<?= htmlspecialchars($creator['profile_picture']) ?>"
+                                                <img src="../../storage/profile_picture/<?= htmlspecialchars($item['creator']['profile_picture']) ?>"
                                                     alt="" class="w-full h-full object-cover"
                                                     onerror="this.style.display='none'">
                                             </div>
-                                            <p class="text-[10px] text-gray-400 truncate"><?= htmlspecialchars($creator['username']) ?></p>
+                                            <p class="text-[10px] text-gray-400 truncate"><?= htmlspecialchars($item['creator']['username']) ?></p>
                                         </div>
                                     </div>
-                                    <?php if ($isAdmin): ?>
+                                    <?php if ($item['isAdmin']): ?>
                                     <span class="inline-flex items-center gap-1 px-2 py-0.5 rounded-full text-[10px] font-semibold bg-blue-50 text-blue-400 border border-blue-100 shrink-0">
                                         <i data-lucide="shield-check" class="w-2.5 h-2.5"></i> Admin
                                     </span>
@@ -199,71 +220,77 @@ $user_id = $_SESSION["session"]["id"];
                                     </span>
                                     <?php endif; ?>
                                 </a>
-                                <?php endwhile; ?>
+                                <?php endforeach; ?>
                             </div>
+                            <?php endif; ?>
                         </div>
 
+                        <!-- All Your Activity -->
                         <div class="col-span-2 border border-gray-100 rounded-2xl flex flex-col overflow-hidden">
                             
-                            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between">
+                            <div class="px-6 py-4 border-b border-gray-100 flex items-center justify-between shrink-0">
                                 <h2 class="text-xs font-medium text-gray-400 uppercase tracking-widest">All Your Activity</h2>
                                 <a href="class.php" class="text-[11px] text-[#93C5FD] hover:text-blue-400 font-medium flex items-center gap-1 transition-colors">
                                     View all <i data-lucide="chevron-right" class="w-3 h-3"></i>
                                 </a>
                             </div>
 
-                            <div class="flex-1 overflow-y-auto custom-scrollbar divide-y divide-gray-50">
-                                <?php
-                                    $user_activity_query = "SELECT * FROM user_class WHERE user_id = '$user_id'";
-                                    $user_activity_result = mysqli_query($connection, $user_activity_query);
-                                    
-                                    // Variabel penanda jika tidak ada aktivitas sama sekali
-                                    $has_activity = false; 
-
-                                    // MULAI PERULANGAN KELAS
-                                    while ($user_activity = mysqli_fetch_assoc($user_activity_result)) :
-                                        $class_activity_id = $user_activity['class_id'];
-                                        
-                                        // Ambil info kelas
-                                        $class_activity_query = "SELECT name FROM class WHERE id = '$class_activity_id'";
-                                        $class_activity = mysqli_fetch_assoc(mysqli_query($connection, $class_activity_query));
-                                        
-                                        // Ambil aktivitas (session) yang sedang aktif saja
-                                        $activity_query = "SELECT * FROM session WHERE class_id = '$class_activity_id' AND is_active = '1'";
-                                        $activity_result = mysqli_query($connection, $activity_query);
-                                        
-                                        // PERULANGAN AKTIVITAS: Jika ada sesi yang aktif, tampilkan datanya
-                                        while ($activity = mysqli_fetch_assoc($activity_result)):
-                                            $has_activity = true; // Tandai bahwa ada minimal 1 aktivitas
-                                ?>
+                            <?php
+                                $user_activity_query = "SELECT * FROM user_class WHERE user_id = '$user_id'";
+                                $user_activity_result = mysqli_query($connection, $user_activity_query);
                                 
+                                $has_activity = false;
+                                $activities = [];
+
+                                while ($user_activity = mysqli_fetch_assoc($user_activity_result)) {
+                                    $class_activity_id = $user_activity['class_id'];
+                                    $class_activity_query = "SELECT name FROM class WHERE id = '$class_activity_id'";
+                                    $class_activity = mysqli_fetch_assoc(mysqli_query($connection, $class_activity_query));
+                                    $activity_query = "SELECT * FROM session WHERE class_id = '$class_activity_id' AND is_active = '1'";
+                                    $activity_result = mysqli_query($connection, $activity_query);
+                                    while ($activity = mysqli_fetch_assoc($activity_result)) {
+                                        $has_activity = true;
+                                        $activities[] = [
+                                            'activity' => $activity,
+                                            'class_name' => $class_activity['name'] ?? 'Unknown Class',
+                                        ];
+                                    }
+                                }
+                            ?>
+
+                            <?php if (!$has_activity): ?>
+                            <div class="flex-1 flex flex-col items-center justify-center">
+                                <i data-lucide="calendar-x" class="w-6 h-6 text-gray-200 mb-2"></i>
+                                <p class="text-[11px] text-gray-300">No active sessions right now</p>
+                            </div>
+                            <?php else: ?>
+                            <div class="table-scroll-area custom-scrollbar divide-y divide-gray-50">
+                                <?php foreach ($activities as $item): ?>
                                 <div class="px-6 py-4 flex items-start gap-3 hover:bg-gray-50 transition-colors">
                                     <div class="w-8 h-8 rounded-xl bg-[#F1F9FE] flex items-center justify-center shrink-0 mt-0.5">
                                         <i data-lucide="shield" class="w-3.5 h-3.5 text-[#93C5FD]"></i>
                                     </div>
                                     <div class="flex-1 min-w-0">
-                                        <p class="text-xs font-medium text-gray-600 leading-tight"><?= htmlspecialchars($activity["name"] ?? 'Unknown Activity') ?></p>
-                                        <p class="text-[10px] text-gray-400 mt-0.5 truncate"><?= htmlspecialchars($class_activity["name"] ?? 'Unknown Class') ?></p>
+                                        <p class="text-xs font-medium text-gray-600 leading-tight"><?= htmlspecialchars($item['activity']['name'] ?? 'Unknown Activity') ?></p>
+                                        <p class="text-[10px] text-gray-400 mt-0.5 truncate"><?= htmlspecialchars($item['class_name']) ?></p>
                                     </div>
-                                    <span class="text-[10px] text-gray-400 shrink-0 pt-0.5 flex items-center gap-1">
-                                        <i data-lucide="calendar" class="w-3 h-3"></i>
-                                        <?= htmlspecialchars($activity["created_at"] ?? '-') ?>
-                                    </span>
+                                    <div class="shrink-0 text-right">
+                                        <p class="text-[10px] font-semibold text-gray-500">
+                                            <?= date("d M Y", strtotime($item["activity"]["start_time"] ?? '-')) ?>
+                                        </p>
+                                        <p class="text-[9px] text-gray-300 mt-0.5">
+                                            <?php
+                                                $tz = new DateTimeZone($item["activity"]["timezone"] ?? 'UTC');
+                                                $dt = new DateTime($item["activity"]["start_time"] ?? 'now', $tz);
+                                                echo $dt->format("H:i") . " · " . htmlspecialchars($item["activity"]["timezone"]);
+                                            ?>
+                                        </p>
+                                    </div>
                                 </div>
-
-                                <?php 
-                                        endwhile; // Akhir perulangan aktivitas
-                                    endwhile; // Akhir perulangan kelas
-                                ?>
-
-                                <?php if (!$has_activity): ?>
-                                <div class="px-6 py-10 flex flex-col items-center text-center">
-                                    <i data-lucide="calendar-x" class="w-6 h-6 text-gray-200 mb-2"></i>
-                                    <p class="text-[11px] text-gray-300">No active sessions right now</p>
-                                </div>
-                                <?php endif; ?>
-
+                                <?php endforeach; ?>
                             </div>
+                            <?php endif; ?>
+
                         </div>
 
                     </div>
