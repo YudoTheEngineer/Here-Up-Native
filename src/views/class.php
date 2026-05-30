@@ -77,7 +77,7 @@ $total             = mysqli_num_rows($user_class_result);
                 <i data-lucide="presentation" class="w-5 h-5"></i>
                 <span class="text-sm">Class</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-xl transition-all">
+            <a href="attendance.php" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-xl transition-all">
                 <i data-lucide="clipboard-check" class="w-5 h-5"></i>
                 <span class="text-sm">Attendance</span>
             </a>
@@ -174,12 +174,6 @@ $total             = mysqli_num_rows($user_class_result);
                             </a>
                             <?php endif; ?>
                         </form>
-
-                        <button class="flex cursor-pointer items-center gap-2 px-5 py-2 bg-[#93C5FD] text-white rounded-xl text-sm font-medium hover:bg-blue-400 transition-all shadow-sm">
-                            <i data-lucide="plus" class="w-4 h-4"></i>
-                            New Class
-                        </button>
-
                     </div>
                 </div>
 

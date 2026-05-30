@@ -59,7 +59,7 @@ $user_id = $_SESSION["session"]["id"];
                     <i data-lucide="presentation" class="w-5 h-5"></i>
                     <span class="text-sm">Class</span>
                 </a>
-                <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-xl transition-all">
+                <a href="attendance.php" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-xl transition-all">
                     <i data-lucide="clipboard-check" class="w-5 h-5"></i>
                     <span class="text-sm">Attendance</span>
                 </a>

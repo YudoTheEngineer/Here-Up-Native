@@ -43,6 +43,24 @@ $member_total = mysqli_num_rows($member_result);
 $session_query = "SELECT * FROM session WHERE class_id = $class_id";
 $session_result = mysqli_query($connection, $session_query);
 $session_total = mysqli_num_rows($session_result);
+// Attendance Statistics
+$attendance_stats = [];
+
+$attendance_query = "
+    SELECT
+        member_id,
+        status,
+        COUNT(*) as total
+    FROM attendance
+    WHERE class_id = '$class_id'
+    GROUP BY member_id, status
+";
+
+$attendance_result = mysqli_query($connection, $attendance_query);
+
+while ($attendance = mysqli_fetch_assoc($attendance_result)) {
+    $attendance_stats[$attendance['member_id']][$attendance['status']] = $attendance['total'];
+}
 ?>
 
 <!DOCTYPE html>
@@ -85,7 +103,7 @@ $session_total = mysqli_num_rows($session_result);
                 <i data-lucide="presentation" class="w-5 h-5"></i>
                 <span class="text-sm">Class</span>
             </a>
-            <a href="#" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-xl transition-all">
+            <a href="attendance.php" class="flex items-center gap-3 px-4 py-3 text-gray-400 hover:bg-gray-50 hover:text-gray-600 rounded-xl transition-all">
                 <i data-lucide="clipboard-check" class="w-5 h-5"></i>
                 <span class="text-sm">Attendance</span>
             </a>
@@ -241,6 +259,10 @@ $session_total = mysqli_num_rows($session_result);
                             <?php
                                 $row_num = 1;
                                 while($member = mysqli_fetch_assoc($member_result)):
+                                    $present_count = $attendance_stats[$member['id']]['1'] ?? 0;
+                                    $excused_count = $attendance_stats[$member['id']]['2'] ?? 0;
+                                    $sick_count = $attendance_stats[$member['id']]['3'] ?? 0;
+                                    $not_excused_count = $attendance_stats[$member['id']]['4'] ?? 0;
                             ?>
                             <tr class="border-b border-gray-50 hover:bg-gray-50/60 transition-colors">
                                 <td class="py-4 text-xs text-gray-400"><?= $row_num++; ?></td>
@@ -270,25 +292,25 @@ $session_total = mysqli_num_rows($session_result);
                                 <td class="py-4 text-center">
                                     <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-green-50 text-green-600">
                                         <i data-lucide="check-circle-2" class="w-3 h-3"></i>
-                                        0
+                                        <?= $present_count ?>
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
                                     <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-yellow-50 text-yellow-600">
                                         <i data-lucide="file-text" class="w-3 h-3"></i>
-                                        0
+                                        <?= $excused_count ?>
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
                                     <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-blue-50 text-blue-600">
                                         <i data-lucide="heart-pulse" class="w-3 h-3"></i>
-                                        0
+                                        <?= $sick_count ?>
                                     </span>
                                 </td>
                                 <td class="py-4 text-center">
                                     <span class="inline-flex items-center gap-1 px-2 py-[3px] rounded-lg text-[11px] font-medium bg-red-50 text-red-500">
                                         <i data-lucide="x-circle" class="w-3 h-3"></i>
-                                        0
+                                        <?= $not_excused_count ?>
                                     </span>
                                 </td>
                                 <td class="py-4 text-right">
@@ -325,7 +347,9 @@ $session_total = mysqli_num_rows($session_result);
 
                     <?php else: ?>
 
-                    <?php while($session = mysqli_fetch_assoc($session_result)): ?>
+                    <?php 
+                        while($session = mysqli_fetch_assoc($session_result)):
+                    ?>
                     <a href="session.php?class_id=<?= htmlspecialchars($class_id)?>&session_id=<?= htmlspecialchars($session["id"])?>">
                         <div class="border border-gray-100 rounded-2xl p-5 hover:border-gray-200 transition-all cursor-pointer flex flex-col">
                             <!-- Card Header -->
@@ -346,7 +370,7 @@ $session_total = mysqli_num_rows($session_result);
                                         <?php else: ?>
                                         <span class="inline-flex items-center gap-1.5 px-2 py-[3px] rounded-full text-[10px] font-medium bg-gray-50 text-gray-400 flex-shrink-0">
                                             <span class="w-1.5 h-1.5 rounded-full bg-gray-300"></span>
-                                            Closed
+                                            Not Active
                                         </span>
                                         <?php endif; ?>
                                     </div>
